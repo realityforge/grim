@@ -64,7 +64,6 @@ define 'grim' do
 
     test.using :testng
     test.options[:properties] = { 'grim.fixture_dir' => _('src/test/resources') }
-    test.compile.with :guiceyloops
 
     # The generators are configured to generate to here.
     iml.test_source_directories << _('generated/processors/test/java')
