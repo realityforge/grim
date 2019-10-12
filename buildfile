@@ -28,8 +28,6 @@ define 'grim' do
   define 'processor' do
     compile.with :autoservice,
                  :autocommon,
-                 :javapoet,
-                 :guava,
                  :javax_annotation
 
     test.with :compile_testing,
@@ -45,8 +43,6 @@ define 'grim' do
     package(:javadoc)
 
     package(:jar).enhance do |jar|
-      jar.merge(artifact(:javapoet))
-      jar.merge(artifact(:guava))
       jar.enhance do |f|
         shaded_jar = (f.to_s + '-shaded')
         Buildr.ant 'shade_jar' do |ant|
@@ -54,7 +50,6 @@ define 'grim' do
           artifact.invoke
           ant.taskdef :name => 'shade', :classname => 'org.realityforge.ant.shade.Shade', :classpath => artifact.to_s
           ant.shade :jar => f.to_s, :uberJar => shaded_jar do
-            ant.relocation :pattern => 'com.squareup.javapoet', :shadedPattern => 'grim.processor.vendor.javapoet'
             ant.relocation :pattern => 'com.google', :shadedPattern => 'grim.processor.vendor.google'
           end
         end
