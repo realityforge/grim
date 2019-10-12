@@ -93,6 +93,11 @@ define 'grim' do
       end
     end
   end
+
+  ipr.add_testng_configuration('processor',
+                               :module => 'processor',
+                               :jvm_args => '-ea -Dgrim.output_fixture_data=true -Dgrim.fixture_dir=src/test/fixtures')
+
   ipr.add_component('JavacSettings') do |xml|
     xml.option(:name => 'ADDITIONAL_OPTIONS_STRING', :value => '-Xlint:all,-processing,-serial')
   end
