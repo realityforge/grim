@@ -130,6 +130,7 @@ public final class GrimProcessor
     g.writeStartArray();
 
     processOmitClinit( element, g );
+    processOmitType( element, g );
 
     g.writeEnd();
     g.close();
@@ -154,6 +155,64 @@ public final class GrimProcessor
       g.write( "type", toTypePattern( element ) );
       g.write( "member", quotedName( "$clinit" ) );
       g.writeEnd();
+    }
+  }
+
+  private void processOmitType( @Nonnull final TypeElement element, @Nonnull final JsonGenerator g )
+  {
+    final List<AnnotationMirror> omitTypes =
+      ProcessorUtil.getRepeatingAnnotations( processingEnv.getElementUtils(),
+                                             element,
+                                             Constants.OMIT_TYPES_CLASSNAME,
+                                             Constants.OMIT_TYPE_CLASSNAME );
+    for ( final AnnotationMirror annotation : omitTypes )
+    {
+      g.writeStartObject();
+      g.write( "type", toTypePattern( element ) );
+      processConditions( element, annotation, "@OmitType", g );
+      g.writeEnd();
+    }
+  }
+
+  private void processConditions( @Nonnull final Element element,
+                                  @Nonnull final AnnotationMirror annotation,
+                                  @Nonnull final String annotationName,
+                                  @Nonnull final JsonGenerator g )
+  {
+    final String when =
+      (String) ProcessorUtil.getAnnotationValue( processingEnv.getElementUtils(), annotation, "unless" ).getValue();
+    final String unless =
+      (String) ProcessorUtil.getAnnotationValue( processingEnv.getElementUtils(), annotation, "when" ).getValue();
+    if ( !"".equals( when ) && !"".equals( unless ) )
+    {
+      processingEnv.getMessager()
+        .printMessage( ERROR,
+                       annotationName + " annotation incorrectly specifies both a when and unless parameter",
+                       element,
+                       annotation );
+    }
+    if ( !"".equals( when ) )
+    {
+      parseCondition( when, ConditionDescriptor.Operator.EQUALS ).generate( g );
+    }
+    else if ( !"".equals( unless ) )
+    {
+      parseCondition( unless, ConditionDescriptor.Operator.NOT_EQUALS ).generate( g );
+    }
+  }
+
+  @Nonnull
+  private ConditionDescriptor parseCondition( @Nonnull final String expression,
+                                              @Nonnull final ConditionDescriptor.Operator operator )
+  {
+    final int split = expression.indexOf( "=" );
+    if ( -1 == split )
+    {
+      return new ConditionDescriptor( expression, "true", operator );
+    }
+    else
+    {
+      return new ConditionDescriptor( expression.substring( 0, split ), expression.substring( split + 1 ), operator );
     }
   }
 
