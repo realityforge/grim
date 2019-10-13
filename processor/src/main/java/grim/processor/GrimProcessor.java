@@ -166,10 +166,7 @@ public final class GrimProcessor
   private void processOmitType( @Nonnull final TypeElement element, @Nonnull final JsonGenerator g )
   {
     final List<AnnotationMirror> omitTypes =
-      getRepeatingAnnotations(
-        element,
-        Constants.OMIT_TYPES_CLASSNAME,
-        Constants.OMIT_TYPE_CLASSNAME );
+      getRepeatingAnnotations( element, Constants.OMIT_TYPES_CLASSNAME, Constants.OMIT_TYPE_CLASSNAME );
     for ( final AnnotationMirror annotation : omitTypes )
     {
       g.writeStartObject();
@@ -182,10 +179,7 @@ public final class GrimProcessor
   private void processOmitPattern( @Nonnull final TypeElement element, @Nonnull final JsonGenerator g )
   {
     final List<AnnotationMirror> omitTypes =
-      getRepeatingAnnotations(
-        element,
-        Constants.OMIT_PATTERNS_CLASSNAME,
-        Constants.OMIT_PATTERN_CLASSNAME );
+      getRepeatingAnnotations( element, Constants.OMIT_PATTERNS_CLASSNAME, Constants.OMIT_PATTERN_CLASSNAME );
     for ( final AnnotationMirror annotation : omitTypes )
     {
       g.writeStartObject();
