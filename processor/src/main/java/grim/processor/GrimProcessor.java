@@ -112,6 +112,12 @@ public final class GrimProcessor
   }
 
   @Nonnull
+  private String toTypePattern( @Nonnull final TypeElement element )
+  {
+    return quotedName( element.getQualifiedName().toString() );
+  }
+
+  @Nonnull
   private String quotedName( @Nonnull final String string )
   {
     return "^" + Pattern.quote( string ) + "$";
