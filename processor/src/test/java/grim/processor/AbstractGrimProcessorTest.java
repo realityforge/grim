@@ -37,7 +37,7 @@ abstract class AbstractGrimProcessorTest
       config.append( element );
     }
     input.append( ".java" );
-    config.append( ".json" );
+    config.append( ".grim.json" );
     assertGrimRulesGenerated( Collections.singletonList( fixture( input.toString() ) ),
                               Collections.singletonList( config.toString() ) );
   }
