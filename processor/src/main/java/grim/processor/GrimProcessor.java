@@ -112,8 +112,8 @@ public final class GrimProcessor
   {
     final FileObject resource = processingEnv.getFiler()
       .createResource( StandardLocation.CLASS_OUTPUT,
-                       element.getQualifiedName(),
-                       element.getSimpleName().toString(),
+                       "",
+                       "META-INF/grim/" + element.getQualifiedName().toString().replace( ".", "/" ) + ".json",
                        element );
     try ( final OutputStream outputStream = resource.openOutputStream() )
     {
