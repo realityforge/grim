@@ -1,8 +1,13 @@
 package grim.annotations;
 
+import java.lang.annotation.Documented;
+import java.lang.annotation.Repeatable;
+
 /**
  * Annotation indicating when a java element should be omitted from generated javascript.
  */
+@Documented
+@Repeatable( OmitSymbols.class )
 public @interface OmitSymbol
 {
   /**
