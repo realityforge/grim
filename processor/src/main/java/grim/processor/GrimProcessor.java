@@ -1,7 +1,6 @@
 package grim.processor;
 
 import com.google.auto.common.SuperficialValidation;
-import com.google.auto.service.AutoService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -16,7 +15,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
@@ -34,7 +32,6 @@ import static javax.tools.Diagnostic.Kind.*;
  * which elements should be omitted from compiled javascript under which conditions.
  */
 @SuppressWarnings( "Duplicates" )
-@AutoService( Processor.class )
 @SupportedAnnotationTypes( { "grim.annotations.*" } )
 @SupportedSourceVersion( SourceVersion.RELEASE_8 )
 public final class GrimProcessor
