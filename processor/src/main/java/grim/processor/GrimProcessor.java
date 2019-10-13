@@ -2,6 +2,7 @@ package grim.processor;
 
 import com.google.auto.common.SuperficialValidation;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
