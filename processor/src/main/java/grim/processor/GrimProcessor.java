@@ -111,6 +111,12 @@ public final class GrimProcessor
 
   }
 
+  @Nonnull
+  private String quotedName( @Nonnull final String string )
+  {
+    return "^" + Pattern.quote( string ) + "$";
+  }
+
   private void processingErrorMessage( @Nonnull final TypeElement target )
   {
     processingEnv.getMessager().printMessage( ERROR,
