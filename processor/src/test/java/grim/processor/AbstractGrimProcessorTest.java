@@ -129,7 +129,7 @@ abstract class AbstractGrimProcessorTest
   }
 
   @Nonnull
-  private JavaFileObject fixture( @Nonnull final String path )
+  final JavaFileObject fixture( @Nonnull final String path )
   {
     try
     {
