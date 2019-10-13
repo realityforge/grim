@@ -296,7 +296,6 @@ public final class GrimProcessor
    */
   @Nonnull
   private String formatJson( @Nonnull final String input )
-    throws IOException
   {
     return
       input
