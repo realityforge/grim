@@ -8,4 +8,8 @@ public class OmitOnNestedClassExample
   static class Foo
   {
   }
+
+  static class Bar
+  {
+  }
 }

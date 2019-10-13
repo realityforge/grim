@@ -2,5 +2,12 @@
   {
     "type": "^\\Qcom.example.OmitConstructorExample\\E$",
     "member": "^\\Q<init>\\E$"
+  },
+  {
+    "type": "^\\Qcom.example.OmitConstructorExample\\E$",
+    "member": "^\\Q<init>\\E$",
+    "property": "galdr.enable_names",
+    "operator": "NEQ",
+    "value": "true"
   }
 ]

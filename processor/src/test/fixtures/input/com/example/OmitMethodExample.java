@@ -12,4 +12,14 @@ public class OmitMethodExample
   {
     return _name;
   }
+
+  @OmitSymbol( unless = "galdr.enable_scores" )
+  public int getScore()
+  {
+    return _score;
+  }
+
+  public void doStuff()
+  {
+  }
 }

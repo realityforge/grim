@@ -6,5 +6,7 @@ public class OmitFieldExample
 {
   @OmitSymbol
   private String _name;
+  @OmitSymbol( unless = "galdr.environment=development" )
   private int _score;
+  private int _age;
 }
