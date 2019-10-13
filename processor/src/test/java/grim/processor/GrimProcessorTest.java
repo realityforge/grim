@@ -1,5 +1,6 @@
 package grim.processor;
 
+import java.util.Collections;
 import javax.annotation.Nonnull;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -16,7 +17,6 @@ public class GrimProcessorTest
         new Object[]{ "com.example.OmitConstructorExample" },
         new Object[]{ "com.example.OmitFieldExample" },
         new Object[]{ "com.example.OmitMethodExample" },
-        new Object[]{ "com.example.OmitOnNestedClassExample" },
         new Object[]{ "com.example.OmitPatternExample" },
         new Object[]{ "com.example.OmitTypeExample" }
       };
@@ -27,5 +27,15 @@ public class GrimProcessorTest
     throws Exception
   {
     assertGrimRulesGenerated( classname );
+  }
+
+  @Test
+  public void processSuccessfulCompileOnNestedClass()
+    throws Exception
+  {
+    final String inputFilename = "input/com/example/OmitOnNestedClassExample.java";
+    final String outputFilename = "expected/META-INF/grim/com/example/OmitOnNestedClassExample$Foo.grim.json";
+    assertGrimRulesGenerated( Collections.singletonList( fixture( inputFilename ) ),
+                              Collections.singletonList( outputFilename ) );
   }
 }
