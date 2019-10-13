@@ -9,6 +9,7 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
@@ -26,9 +28,12 @@ import javax.json.stream.JsonGenerator;
 import javax.json.stream.JsonGeneratorFactory;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.util.Elements;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 import static javax.tools.Diagnostic.Kind.*;
@@ -149,7 +154,7 @@ public final class GrimProcessor
 
   private void processOmitClinit( @Nonnull final TypeElement element, @Nonnull final JsonGenerator g )
   {
-    final AnnotationMirror omitClinit = ProcessorUtil.findAnnotationByType( element, Constants.OMIT_CLINIT_CLASSNAME );
+    final AnnotationMirror omitClinit = findAnnotationByType( element, Constants.OMIT_CLINIT_CLASSNAME );
     if ( null != omitClinit )
     {
       g.writeStartObject();
@@ -162,10 +167,10 @@ public final class GrimProcessor
   private void processOmitType( @Nonnull final TypeElement element, @Nonnull final JsonGenerator g )
   {
     final List<AnnotationMirror> omitTypes =
-      ProcessorUtil.getRepeatingAnnotations( processingEnv.getElementUtils(),
-                                             element,
-                                             Constants.OMIT_TYPES_CLASSNAME,
-                                             Constants.OMIT_TYPE_CLASSNAME );
+      getRepeatingAnnotations( processingEnv.getElementUtils(),
+                               element,
+                               Constants.OMIT_TYPES_CLASSNAME,
+                               Constants.OMIT_TYPE_CLASSNAME );
     for ( final AnnotationMirror annotation : omitTypes )
     {
       g.writeStartObject();
@@ -178,16 +183,16 @@ public final class GrimProcessor
   private void processOmitPattern( @Nonnull final TypeElement element, @Nonnull final JsonGenerator g )
   {
     final List<AnnotationMirror> omitTypes =
-      ProcessorUtil.getRepeatingAnnotations( processingEnv.getElementUtils(),
-                                             element,
-                                             Constants.OMIT_PATTERNS_CLASSNAME,
-                                             Constants.OMIT_PATTERN_CLASSNAME );
+      getRepeatingAnnotations( processingEnv.getElementUtils(),
+                               element,
+                               Constants.OMIT_PATTERNS_CLASSNAME,
+                               Constants.OMIT_PATTERN_CLASSNAME );
     for ( final AnnotationMirror annotation : omitTypes )
     {
       g.writeStartObject();
       g.write( "type", toTypePattern( element ) );
       final String pattern =
-        (String) ProcessorUtil.getAnnotationValue( processingEnv.getElementUtils(), annotation, "pattern" ).getValue();
+        (String) getAnnotationValue( processingEnv.getElementUtils(), annotation, "pattern" ).getValue();
       g.write( "member", pattern );
       processConditions( element, annotation, "@OmitPattern", g );
       g.writeEnd();
@@ -200,9 +205,9 @@ public final class GrimProcessor
                                   @Nonnull final JsonGenerator g )
   {
     final String when =
-      (String) ProcessorUtil.getAnnotationValue( processingEnv.getElementUtils(), annotation, "unless" ).getValue();
+      (String) getAnnotationValue( processingEnv.getElementUtils(), annotation, "unless" ).getValue();
     final String unless =
-      (String) ProcessorUtil.getAnnotationValue( processingEnv.getElementUtils(), annotation, "when" ).getValue();
+      (String) getAnnotationValue( processingEnv.getElementUtils(), annotation, "when" ).getValue();
     if ( !"".equals( when ) && !"".equals( unless ) )
     {
       processingEnv.getMessager()
@@ -328,5 +333,81 @@ public final class GrimProcessor
         .replaceAll( "(?m)^ {16}\"", "        \"" )
         .replaceAll( "(?m)^\n\\[\n", "[\n" ) +
       "\n";
+  }
+
+  @SuppressWarnings( "unchecked" )
+  @Nonnull
+  private List<AnnotationMirror> getRepeatingAnnotations( @Nonnull final Elements elements,
+                                                          @Nonnull final Element typeElement,
+                                                          @Nonnull final String containerClassName,
+                                                          @Nonnull final String annotationClassName )
+  {
+    final AnnotationValue annotationValue =
+      findAnnotationValue( elements, typeElement, containerClassName, "value" );
+    if ( null != annotationValue )
+    {
+      return ( (List<AnnotationValue>) annotationValue.getValue() ).stream().
+        map( v -> (AnnotationMirror) v.getValue() ).collect( Collectors.toList() );
+    }
+    else
+    {
+      final AnnotationMirror annotation = findAnnotationByType( typeElement, annotationClassName );
+      if ( null != annotation )
+      {
+        return Collections.singletonList( annotation );
+      }
+      else
+      {
+        return Collections.emptyList();
+      }
+    }
+  }
+
+  @SuppressWarnings( "SameParameterValue" )
+  @Nullable
+  private AnnotationValue findAnnotationValue( @Nonnull final Elements elements,
+                                               @Nonnull final Element typeElement,
+                                               @Nonnull final String annotationClassName,
+                                               @Nonnull final String parameterName )
+  {
+    final AnnotationMirror mirror = findAnnotationByType( typeElement, annotationClassName );
+    if ( null != mirror )
+    {
+      return findAnnotationValue( elements, mirror, parameterName );
+    }
+    else
+    {
+      return null;
+    }
+  }
+
+  @Nullable
+  private AnnotationValue findAnnotationValue( @Nonnull final Elements elements,
+                                               @Nonnull final AnnotationMirror annotation,
+                                               @Nonnull final String parameterName )
+  {
+    final Map<? extends ExecutableElement, ? extends AnnotationValue> values =
+      elements.getElementValuesWithDefaults( annotation );
+    final ExecutableElement annotationKey = values.keySet().stream().
+      filter( k -> parameterName.equals( k.getSimpleName().toString() ) ).findFirst().orElse( null );
+    return values.get( annotationKey );
+  }
+
+  @Nonnull
+  private AnnotationValue getAnnotationValue( @Nonnull final Elements elements,
+                                              @Nonnull final AnnotationMirror annotation,
+                                              @Nonnull final String parameterName )
+  {
+    final AnnotationValue value = findAnnotationValue( elements, annotation, parameterName );
+    assert null != value;
+    return value;
+  }
+
+  @Nullable
+  private AnnotationMirror findAnnotationByType( @Nonnull final Element typeElement,
+                                                 @Nonnull final String annotationClassName )
+  {
+    return typeElement.getAnnotationMirrors().stream().
+      filter( a -> a.getAnnotationType().toString().equals( annotationClassName ) ).findFirst().orElse( null );
   }
 }
