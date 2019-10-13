@@ -1,2 +1,23 @@
 [
+  {
+    "type": "^\\Qcom.example.OmitPatternExample\\E$",
+    "member": "^_name$",
+    "property": "arez.enable_names",
+    "operator": "EQ",
+    "value": "true"
+  },
+  {
+    "type": "^\\Qcom.example.OmitPatternExample\\E$",
+    "member": "^_name$",
+    "property": "arez.environment",
+    "operator": "NEQ",
+    "value": "production"
+  },
+  {
+    "type": "^\\Qcom.example.OmitPatternExample\\E$",
+    "member": "^_name$",
+    "property": "arez.enable_verify",
+    "operator": "EQ",
+    "value": "true"
+  }
 ]

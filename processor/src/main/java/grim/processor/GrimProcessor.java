@@ -131,6 +131,7 @@ public final class GrimProcessor
 
     processOmitClinit( element, g );
     processOmitType( element, g );
+    processOmitPattern( element, g );
 
     g.writeEnd();
     g.close();
@@ -170,6 +171,25 @@ public final class GrimProcessor
       g.writeStartObject();
       g.write( "type", toTypePattern( element ) );
       processConditions( element, annotation, "@OmitType", g );
+      g.writeEnd();
+    }
+  }
+
+  private void processOmitPattern( @Nonnull final TypeElement element, @Nonnull final JsonGenerator g )
+  {
+    final List<AnnotationMirror> omitTypes =
+      ProcessorUtil.getRepeatingAnnotations( processingEnv.getElementUtils(),
+                                             element,
+                                             Constants.OMIT_PATTERNS_CLASSNAME,
+                                             Constants.OMIT_PATTERN_CLASSNAME );
+    for ( final AnnotationMirror annotation : omitTypes )
+    {
+      g.writeStartObject();
+      g.write( "type", toTypePattern( element ) );
+      final String pattern =
+        (String) ProcessorUtil.getAnnotationValue( processingEnv.getElementUtils(), annotation, "pattern" ).getValue();
+      g.write( "member", pattern );
+      processConditions( element, annotation, "@OmitPattern", g );
       g.writeEnd();
     }
   }
