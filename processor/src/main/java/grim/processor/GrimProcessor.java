@@ -47,7 +47,7 @@ public final class GrimProcessor
       final String annotationName = annotation.getQualifiedName().toString();
       if ( Constants.OMIT_CLINIT_CLASSNAME.equals( annotationName ) ||
            Constants.OMIT_PATTERNS_CLASSNAME.equals( annotationName ) ||
-           Constants.OMIT_TYPE_CLASSNAME.equals( annotationName ) )
+           Constants.OMIT_TYPES_CLASSNAME.equals( annotationName ) )
       {
         final Set<? extends Element> elements = env.getElementsAnnotatedWith( annotation );
         for ( final Element element : elements )
@@ -56,7 +56,7 @@ public final class GrimProcessor
           typesToProcess.put( typeElement.getQualifiedName().toString(), typeElement );
         }
       }
-      else if ( Constants.OMIT_SYMBOL_CLASSNAME.equals( annotationName ) )
+      else if ( Constants.OMIT_SYMBOLS_CLASSNAME.equals( annotationName ) )
       {
         final Set<? extends Element> elements = env.getElementsAnnotatedWith( annotation );
         for ( final Element element : elements )
