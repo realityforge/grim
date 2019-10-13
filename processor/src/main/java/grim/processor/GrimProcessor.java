@@ -115,9 +115,9 @@ public final class GrimProcessor
                        element.getQualifiedName(),
                        element.getSimpleName().toString(),
                        element );
-    try
+    try ( final OutputStream outputStream = resource.openOutputStream() )
     {
-      final JsonGenerator g = Json.createGenerator( resource.openOutputStream() );
+      final JsonGenerator g = Json.createGenerator( outputStream );
       g.writeStartArray();
 
       g.writeEnd();
