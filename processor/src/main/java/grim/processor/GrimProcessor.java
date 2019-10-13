@@ -33,6 +33,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 import static javax.tools.Diagnostic.Kind.*;
@@ -136,6 +137,7 @@ public final class GrimProcessor
     processOmitClinit( element, g );
     processOmitType( element, g );
     processOmitPattern( element, g );
+    processOmitSymbol( element, g );
 
     g.writeEnd();
     g.close();
@@ -188,6 +190,33 @@ public final class GrimProcessor
         (String) getAnnotationValue( annotation, "pattern" ).getValue();
       g.write( "member", pattern );
       processConditions( element, annotation, "@OmitPattern", g );
+      g.writeEnd();
+    }
+  }
+
+  private void processOmitSymbol( @Nonnull final TypeElement element, @Nonnull final JsonGenerator g )
+  {
+    for ( final Element child : element.getEnclosedElements() )
+    {
+      if ( child instanceof ExecutableElement || child instanceof VariableElement )
+      {
+        processOmitSymbol( element, child, g );
+      }
+    }
+  }
+
+  private void processOmitSymbol( @Nonnull final TypeElement typeElement,
+                                  @Nonnull final Element element,
+                                  @Nonnull final JsonGenerator g )
+  {
+    final List<AnnotationMirror> omitTypes =
+      getRepeatingAnnotations( element, Constants.OMIT_SYMBOLS_CLASSNAME, Constants.OMIT_SYMBOL_CLASSNAME );
+    for ( final AnnotationMirror annotation : omitTypes )
+    {
+      g.writeStartObject();
+      g.write( "type", toTypePattern( typeElement ) );
+      g.write( "member", quotedName( element.getSimpleName().toString() ) );
+      processConditions( element, annotation, "@OmitSymbol", g );
       g.writeEnd();
     }
   }

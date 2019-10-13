@@ -1,2 +1,6 @@
 [
+  {
+    "type": "^\\Qcom.example.OmitConstructorExample\\E$",
+    "member": "^\\Q<init>\\E$"
+  }
 ]

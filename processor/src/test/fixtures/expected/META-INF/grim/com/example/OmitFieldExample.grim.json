@@ -1,2 +1,6 @@
 [
+  {
+    "type": "^\\Qcom.example.OmitFieldExample\\E$",
+    "member": "^\\Q_name\\E$"
+  }
 ]

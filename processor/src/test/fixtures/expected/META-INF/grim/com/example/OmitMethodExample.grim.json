@@ -1,2 +1,6 @@
 [
+  {
+    "type": "^\\Qcom.example.OmitMethodExample\\E$",
+    "member": "^\\QgetName\\E$"
+  }
 ]
