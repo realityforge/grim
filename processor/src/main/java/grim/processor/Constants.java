@@ -8,6 +8,7 @@ final class Constants
   static final String OMIT_SYMBOL_CLASSNAME = "grim.annotations.OmitSymbol";
   static final String OMIT_SYMBOLS_CLASSNAME = "grim.annotations.OmitSymbols";
   static final String OMIT_TYPE_CLASSNAME = "grim.annotations.OmitType";
+  static final String OMIT_TYPES_CLASSNAME = "grim.annotations.OmitTypes";
 
   private Constants()
   {
