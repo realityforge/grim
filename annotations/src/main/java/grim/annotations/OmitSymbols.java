@@ -4,15 +4,15 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 
 /**
- * Contain annotation so symbols can be omitted from in different contexts.
+ * Annotation containing rules under which symbol is to be omitted from the generated javascript.
  */
 @Target( { ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR } )
 public @interface OmitSymbols
 {
   /**
-   * The conditions under which a symbol is omitted from the type.
+   * The rules under which the symbol is to be omitted from the generated javascript.
    *
-   * @return the conditions under which a symbol is omitted from the type.
+   * @return the rules under which the symbol is to be omitted from the generated javascript.
    */
   OmitSymbol[] value();
 }

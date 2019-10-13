@@ -5,7 +5,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 
 /**
- * Contain annotation so many patterns can be omitted from a type.
+ * Annotation containing rules under which symbols matching a pattern are to be omitted from the generated javascript.
  * This annotation is applied to the class type and applies to all nested members.
  */
 @Documented
@@ -13,9 +13,9 @@ import java.lang.annotation.Target;
 public @interface OmitPatterns
 {
   /**
-   * The patterns to omit from the type.
+   * The rules under which symbols matching a pattern are to be omitted from the generated javascript.
    *
-   * @return the patterns to omit from the type.
+   * @return the rules under which symbols matching a pattern are to be omitted from the generated javascript.
    */
   OmitPattern[] value();
 }
