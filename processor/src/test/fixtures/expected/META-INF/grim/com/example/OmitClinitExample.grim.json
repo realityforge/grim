@@ -1,2 +1,6 @@
 [
+  {
+    "type": "^\\Qcom.example.OmitClinitExample\\E$",
+    "member": "^\\Q$clinit\\E$"
+  }
 ]

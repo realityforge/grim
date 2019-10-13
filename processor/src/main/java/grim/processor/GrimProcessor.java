@@ -25,6 +25,7 @@ import javax.json.Json;
 import javax.json.stream.JsonGenerator;
 import javax.json.stream.JsonGeneratorFactory;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
@@ -128,6 +129,8 @@ public final class GrimProcessor
     final JsonGenerator g = generatorFactory.createGenerator( baos );
     g.writeStartArray();
 
+    processOmitClinit( element, g );
+
     g.writeEnd();
     g.close();
 
@@ -139,6 +142,18 @@ public final class GrimProcessor
     {
       resource.delete();
       throw e;
+    }
+  }
+
+  private void processOmitClinit( @Nonnull final TypeElement element, @Nonnull final JsonGenerator g )
+  {
+    final AnnotationMirror omitClinit = ProcessorUtil.findAnnotationByType( element, Constants.OMIT_CLINIT_CLASSNAME );
+    if ( null != omitClinit )
+    {
+      g.writeStartObject();
+      g.write( "type", toTypePattern( element ) );
+      g.write( "member", quotedName( "$clinit" ) );
+      g.writeEnd();
     }
   }
 
