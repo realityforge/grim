@@ -22,6 +22,7 @@ import javax.json.Json;
 import javax.json.stream.JsonGenerator;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
@@ -111,10 +112,7 @@ public final class GrimProcessor
     throws IOException
   {
     final FileObject resource = processingEnv.getFiler()
-      .createResource( StandardLocation.CLASS_OUTPUT,
-                       "",
-                       "META-INF/grim/" + element.getQualifiedName().toString().replace( ".", "/" ) + ".json",
-                       element );
+      .createResource( StandardLocation.CLASS_OUTPUT, "", toGrimJsonFilename( element ), element );
     try ( final OutputStream outputStream = resource.openOutputStream() )
     {
       final JsonGenerator g = Json.createGenerator( outputStream );
@@ -128,6 +126,28 @@ public final class GrimProcessor
       resource.delete();
       throw e;
     }
+  }
+
+  @Nonnull
+  private String toGrimJsonFilename( @Nonnull final TypeElement element )
+  {
+    return "META-INF/grim/" + typeName( element, true ) + ".grim.json";
+  }
+
+  @Nonnull
+  private String typeName( @Nonnull final Element element, final boolean outerType )
+  {
+    final Element enclosingElement = element.getEnclosingElement();
+    final String parent;
+    if ( enclosingElement instanceof PackageElement )
+    {
+      parent = ( (PackageElement) enclosingElement ).getQualifiedName().toString().replace( ".", "/" ) + "/";
+    }
+    else
+    {
+      parent = typeName( enclosingElement, false ) + "$";
+    }
+    return parent + element.getSimpleName().toString();
   }
 
   @Nonnull
