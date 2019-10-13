@@ -4,8 +4,8 @@
  * symbols are often often omitted based on a condition which uses a simple expression language.
  * The symbols omitted may be designated by a name or a pattern matching multiple names.
  *
- * <p>The expression language used in conditions is based on compile time settings. The expression either
- * reference a compile time setting (in which case the expression is true if the expression is true) or
- * use "[compile-time-setting][operator][string literal]" where "[operator]" can either be "==" or "!=".</p>
+ * <p>The expression language used in conditions is based on matching the compile time settings. The expression either
+ * references a compile time setting (in which case the expression is true if the value of the compile time setting
+ * is <tt>true</tt>) or is of the form "[compile-time-setting]=[literal]".</p>
  */
 package grim.annotations;
