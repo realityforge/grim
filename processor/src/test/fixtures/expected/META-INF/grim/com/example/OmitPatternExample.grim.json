@@ -3,21 +3,21 @@
     "type": "^\\Qcom.example.OmitPatternExample\\E$",
     "member": "^_name$",
     "property": "arez.enable_names",
-    "operator": "EQ",
+    "operator": "NEQ",
     "value": "true"
   },
   {
     "type": "^\\Qcom.example.OmitPatternExample\\E$",
     "member": "^_name$",
     "property": "arez.environment",
-    "operator": "NEQ",
+    "operator": "EQ",
     "value": "production"
   },
   {
     "type": "^\\Qcom.example.OmitPatternExample\\E$",
     "member": "^_name$",
     "property": "arez.enable_verify",
-    "operator": "EQ",
+    "operator": "NEQ",
     "value": "true"
   }
 ]

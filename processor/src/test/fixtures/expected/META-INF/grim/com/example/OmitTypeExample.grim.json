@@ -2,13 +2,13 @@
   {
     "type": "^\\Qcom.example.OmitTypeExample\\E$",
     "property": "arez.environment",
-    "operator": "NEQ",
+    "operator": "EQ",
     "value": "production"
   },
   {
     "type": "^\\Qcom.example.OmitTypeExample\\E$",
     "property": "spritz.enable_spies",
-    "operator": "EQ",
+    "operator": "NEQ",
     "value": "true"
   }
 ]

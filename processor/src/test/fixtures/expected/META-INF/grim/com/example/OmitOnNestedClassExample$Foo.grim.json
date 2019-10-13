@@ -2,7 +2,7 @@
   {
     "type": "^\\Qcom.example.OmitOnNestedClassExample.Foo\\E$",
     "property": "arez.environment",
-    "operator": "NEQ",
+    "operator": "EQ",
     "value": "production"
   }
 ]
