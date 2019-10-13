@@ -20,9 +20,13 @@ import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
+import javax.json.Json;
+import javax.json.stream.JsonGenerator;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.tools.FileObject;
+import javax.tools.StandardLocation;
 import static javax.tools.Diagnostic.Kind.*;
 
 /**
@@ -109,7 +113,24 @@ public final class GrimProcessor
   private void process( @Nonnull final TypeElement element )
     throws IOException
   {
+    final FileObject resource = processingEnv.getFiler()
+      .createResource( StandardLocation.CLASS_OUTPUT,
+                       element.getQualifiedName(),
+                       element.getSimpleName().toString(),
+                       element );
+    try
+    {
+      final JsonGenerator g = Json.createGenerator( resource.openOutputStream() );
+      g.writeStartArray();
 
+      g.writeEnd();
+      g.close();
+    }
+    catch ( final IOException e )
+    {
+      resource.delete();
+      throw e;
+    }
   }
 
   @Nonnull
