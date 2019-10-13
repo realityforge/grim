@@ -27,7 +27,7 @@ public @interface OmitPattern
   String unless() default "";
 
   /**
-   * The symbol should be omitted if this expression is true
+   * The symbol should be omitted if this expression is true.
    * Supplying a value for this parameter is incompatible with supplying a value to the {@link #unless()} parameter.
    *
    * @return the conditional expression.

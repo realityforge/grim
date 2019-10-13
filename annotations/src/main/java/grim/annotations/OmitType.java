@@ -20,7 +20,7 @@ public @interface OmitType
   String unless() default "";
 
   /**
-   * The type should be omitted if this expression is true
+   * The type should be omitted if this expression is true.
    * Supplying a value for this parameter is incompatible with supplying a value to the {@link #unless()} parameter.
    *
    * @return the conditional expression.
