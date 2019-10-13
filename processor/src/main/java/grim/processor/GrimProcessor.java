@@ -1,10 +1,12 @@
 package grim.processor;
 
 import com.google.auto.common.SuperficialValidation;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,6 +23,7 @@ import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.json.Json;
 import javax.json.stream.JsonGenerator;
+import javax.json.stream.JsonGeneratorFactory;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.PackageElement;
@@ -117,13 +120,20 @@ public final class GrimProcessor
   {
     final FileObject resource = processingEnv.getFiler()
       .createResource( StandardLocation.CLASS_OUTPUT, "", toGrimJsonFilename( element ), element );
+    final Map<String, Object> properties = new HashMap<>();
+    properties.put( JsonGenerator.PRETTY_PRINTING, true );
+    final JsonGeneratorFactory generatorFactory = Json.createGeneratorFactory( properties );
+
+    final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    final JsonGenerator g = generatorFactory.createGenerator( baos );
+    g.writeStartArray();
+
+    g.writeEnd();
+    g.close();
+
     try ( final OutputStream outputStream = resource.openOutputStream() )
     {
-      final JsonGenerator g = Json.createGenerator( outputStream );
-      g.writeStartArray();
-
-      g.writeEnd();
-      g.close();
+      outputStream.write( formatJson( baos.toString() ).getBytes( StandardCharsets.UTF_8 ) );
     }
     catch ( final IOException e )
     {
@@ -204,5 +214,26 @@ public final class GrimProcessor
         _deferred.add( element );
       }
     }
+  }
+
+  /**
+   * Format the json file.
+   * This is horribly inefficient but it is not called very often or with big files so ... meh.
+   */
+  @Nonnull
+  private String formatJson( @Nonnull final String input )
+    throws IOException
+  {
+    return
+      input
+        .replaceAll( "(?m)^ {4}\\{", "  {" )
+        .replaceAll( "(?m)^ {4}}", "  }" )
+        .replaceAll( "(?m)^ {8}\"", "    \"" )
+        .replaceAll( "(?m)^ {8}]", "    ]" )
+        .replaceAll( "(?m)^ {12}\\{", "      {" )
+        .replaceAll( "(?m)^ {12}}", "      }" )
+        .replaceAll( "(?m)^ {16}\"", "        \"" )
+        .replaceAll( "(?m)^\n\\[\n", "[\n" ) +
+      "\n";
   }
 }
