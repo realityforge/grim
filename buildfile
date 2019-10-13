@@ -26,8 +26,7 @@ define 'grim' do
 
   desc 'The Annotation processor'
   define 'processor' do
-    compile.with :autoservice,
-                 :autocommon,
+    compile.with :autocommon,
                  :javax_json,
                  :javax_annotation
 

@@ -12,7 +12,6 @@ artifacts:
 
   javax_annotation: org.realityforge.javax.annotation:javax.annotation:jar:1.0.1
 
-  autoservice: com.google.auto.service:auto-service:jar:1.0-rc3
   autocommon: com.google.auto:auto-common:jar:0.10
 
   compile_testing: com.google.testing.compile:compile-testing:jar:0.15
