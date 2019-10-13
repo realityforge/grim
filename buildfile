@@ -24,6 +24,25 @@ define 'grim' do
     package(:javadoc)
   end
 
+  desc 'The assertion library'
+  define 'asserts' do
+    pom.include_transitive_dependencies << artifact(:javax_annotation)
+    pom.include_transitive_dependencies << artifact(:javax_json)
+    pom.include_transitive_dependencies << artifact(:javacsv)
+    pom.include_transitive_dependencies << artifact(:testng)
+    pom.dependency_filter = Proc.new {|dep| dep[:scope].to_s != 'test'}
+
+    compile.with :javax_annotation,
+                 :javax_json,
+                 :javacsv,
+                 :testng,
+                 :symbolmap
+
+    package(:jar)
+    package(:sources)
+    package(:javadoc)
+  end
+
   desc 'The Annotation processor'
   define 'processor' do
     compile.with :autocommon,
