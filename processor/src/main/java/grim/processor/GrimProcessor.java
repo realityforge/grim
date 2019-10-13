@@ -219,11 +219,11 @@ public final class GrimProcessor
   @Nonnull
   private String toGrimJsonFilename( @Nonnull final TypeElement element )
   {
-    return "META-INF/grim/" + typeName( element, true ) + ".grim.json";
+    return "META-INF/grim/" + typeName( element ) + ".grim.json";
   }
 
   @Nonnull
-  private String typeName( @Nonnull final Element element, final boolean outerType )
+  private String typeName( @Nonnull final Element element )
   {
     final Element enclosingElement = element.getEnclosingElement();
     final String parent;
@@ -233,7 +233,7 @@ public final class GrimProcessor
     }
     else
     {
-      parent = typeName( enclosingElement, false ) + "$";
+      parent = typeName( enclosingElement ) + "$";
     }
     return parent + element.getSimpleName().toString();
   }
