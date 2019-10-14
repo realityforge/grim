@@ -1,0 +1,30 @@
+[
+  {
+    "type": "^com\\.example\\..*$",
+    "member": "^_name$",
+    "property": "arez.enable_names",
+    "operator": "NEQ",
+    "value": "true"
+  },
+  {
+    "type": "^com\\.example\\..*$",
+    "member": "^_name$",
+    "property": "arez.environment",
+    "operator": "EQ",
+    "value": "production"
+  },
+  {
+    "type": "^com\\.example\\..*$",
+    "member": "^_context$",
+    "property": "arez.enable_zones",
+    "operator": "NEQ",
+    "value": "true"
+  },
+  {
+    "type": ".*\\.Arez_.*",
+    "member": "^toString$",
+    "property": "arez.enable_names",
+    "operator": "NEQ",
+    "value": "true"
+  }
+]

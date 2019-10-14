@@ -17,7 +17,7 @@ public class GrimProcessorTest
         new Object[]{ "com.example.OmitConstructorExample" },
         new Object[]{ "com.example.OmitFieldExample" },
         new Object[]{ "com.example.OmitMethodExample" },
-        new Object[]{ "com.example.OmitPatternExample" },
+        new Object[]{ "com.example.package-info" },
         new Object[]{ "com.example.OmitTypeExample" }
       };
   }

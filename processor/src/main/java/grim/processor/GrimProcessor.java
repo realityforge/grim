@@ -49,6 +49,13 @@ import static javax.tools.Diagnostic.Kind.*;
 public final class GrimProcessor
   extends AbstractProcessor
 {
+  @Nonnull
+  private static final String BASE_RESOURCE_PATH = "META-INF/grim/";
+  @Nonnull
+  private static final String SUFFIX = ".grim.json";
+  @Nonnull
+  private static final String SENTINEL = "<default>";
+
   @FunctionalInterface
   private interface Action
   {
@@ -62,15 +69,24 @@ public final class GrimProcessor
   @Override
   public boolean process( @Nonnull final Set<? extends TypeElement> annotations, @Nonnull final RoundEnvironment env )
   {
+    final List<PackageElement> packagesToProcess = new ArrayList<>();
     final Map<String, TypeElement> typesToProcess = new HashMap<>();
     for ( final TypeElement annotation : annotations )
     {
       final String annotationName = annotation.getQualifiedName().toString();
-      if ( Constants.OMIT_CLINIT_CLASSNAME.equals( annotationName ) ||
-           Constants.OMIT_PATTERN_CLASSNAME.equals( annotationName ) ||
-           Constants.OMIT_PATTERNS_CLASSNAME.equals( annotationName ) ||
-           Constants.OMIT_TYPE_CLASSNAME.equals( annotationName ) ||
-           Constants.OMIT_TYPES_CLASSNAME.equals( annotationName ) )
+      //noinspection IfCanBeSwitch
+      if ( Constants.OMIT_PATTERN_CLASSNAME.equals( annotationName ) ||
+           Constants.OMIT_PATTERNS_CLASSNAME.equals( annotationName ) )
+      {
+        final Set<? extends Element> elements = env.getElementsAnnotatedWith( annotation );
+        for ( final Element element : elements )
+        {
+          packagesToProcess.add( (PackageElement) element );
+        }
+      }
+      else if ( Constants.OMIT_CLINIT_CLASSNAME.equals( annotationName ) ||
+                Constants.OMIT_TYPE_CLASSNAME.equals( annotationName ) ||
+                Constants.OMIT_TYPES_CLASSNAME.equals( annotationName ) )
       {
         final Set<? extends Element> elements = env.getElementsAnnotatedWith( annotation );
         for ( final Element element : elements )
@@ -90,7 +106,8 @@ public final class GrimProcessor
         }
       }
     }
-    processElements( getElementsToProcess( typesToProcess.values() ) );
+    processPackages( packagesToProcess );
+    processTypes( getElementsToProcess( typesToProcess.values() ) );
     if ( env.getRootElements().isEmpty() && !_deferred.isEmpty() )
     {
       _deferred.forEach( this::processingErrorMessage );
@@ -99,7 +116,21 @@ public final class GrimProcessor
     return true;
   }
 
-  private void processElements( @Nonnull final Collection<TypeElement> elements )
+  private void processPackages( @Nonnull final Collection<PackageElement> elements )
+  {
+    for ( final PackageElement element : elements )
+    {
+      processAction( element, () -> process( element ) );
+    }
+  }
+
+  private void process( @Nonnull final PackageElement element )
+    throws IOException
+  {
+    writeJsonResource( element, toGrimJsonFilename( element ), g -> processOmitPattern( element, g ) );
+  }
+
+  private void processTypes( @Nonnull final Collection<TypeElement> elements )
   {
     for ( final TypeElement element : elements )
     {
@@ -140,7 +171,6 @@ public final class GrimProcessor
     writeJsonResource( element, toGrimJsonFilename( element ), g -> {
       processOmitClinit( element, g );
       processOmitType( element, g );
-      processOmitPattern( element, g );
       processOmitSymbol( element, g );
     } );
   }
@@ -209,17 +239,26 @@ public final class GrimProcessor
     }
   }
 
-  private void processOmitPattern( @Nonnull final TypeElement element, @Nonnull final JsonGenerator g )
+  private void processOmitPattern( @Nonnull final PackageElement element, @Nonnull final JsonGenerator g )
   {
     final List<AnnotationMirror> omitTypes =
       getRepeatingAnnotations( element, Constants.OMIT_PATTERNS_CLASSNAME, Constants.OMIT_PATTERN_CLASSNAME );
     for ( final AnnotationMirror annotation : omitTypes )
     {
       g.writeStartObject();
-      g.write( "type", toTypePattern( element ) );
-      final String pattern =
-        (String) getAnnotationValue( annotation, "pattern" ).getValue();
-      g.write( "member", pattern );
+      final String typePattern =
+        (String) getAnnotationValue( annotation, "type" ).getValue();
+      final String actualTypePattern =
+        SENTINEL.equals( typePattern ) ?
+        "^" + element.getQualifiedName().toString().replace( ".", "\\." ) + "\\..*$" :
+        typePattern;
+      g.write( "type", actualTypePattern );
+
+      final String symbolPattern = (String) getAnnotationValue( annotation, "symbol" ).getValue();
+      if ( !SENTINEL.equals( symbolPattern ) )
+      {
+        g.write( "member", symbolPattern );
+      }
       processConditions( element, annotation, "@OmitPattern", g );
       g.writeEnd();
     }
@@ -293,25 +332,32 @@ public final class GrimProcessor
   }
 
   @Nonnull
+  private String toGrimJsonFilename( @Nonnull final PackageElement element )
+  {
+    return BASE_RESOURCE_PATH + packageFilename( element ) + "package-info" + SUFFIX;
+  }
+
+  @Nonnull
   private String toGrimJsonFilename( @Nonnull final TypeElement element )
   {
-    return "META-INF/grim/" + typeName( element ) + ".grim.json";
+    return BASE_RESOURCE_PATH + typeName( element ) + SUFFIX;
   }
 
   @Nonnull
   private String typeName( @Nonnull final Element element )
   {
     final Element enclosingElement = element.getEnclosingElement();
-    final String parent;
-    if ( enclosingElement instanceof PackageElement )
-    {
-      parent = ( (PackageElement) enclosingElement ).getQualifiedName().toString().replace( ".", "/" ) + "/";
-    }
-    else
-    {
-      parent = typeName( enclosingElement ) + "$";
-    }
+    final String parent =
+      enclosingElement instanceof PackageElement ?
+      packageFilename( (PackageElement) enclosingElement ) :
+      typeName( enclosingElement ) + "$";
     return parent + element.getSimpleName().toString();
+  }
+
+  @Nonnull
+  private String packageFilename( @Nonnull final PackageElement packageElement )
+  {
+    return packageElement.getQualifiedName().toString().replace( ".", "/" ) + "/";
   }
 
   @Nonnull
