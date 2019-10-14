@@ -34,24 +34,47 @@ public final class OmitRule
     _condition = condition;
   }
 
+  /**
+   * Return a regular expression to match the type.
+   *
+   * @return a regular expression to match the type.
+   */
   @Nonnull
   public Pattern getType()
   {
     return _type;
   }
 
+  /**
+   * Return an optional regular expression to match the member.
+   *
+   * @return an optional regular expression to match the member.
+   */
   @Nullable
   public Pattern getMember()
   {
     return _member;
   }
 
+  /**
+   * Return an optional condition that determines the scenarios in which the omit rule applies.
+   *
+   * @return an optional condition that determines the scenarios in which the omit rule applies.
+   */
   @Nullable
   public Condition getCondition()
   {
     return _condition;
   }
 
+  /**
+   * Return true if the specified type+member combination should have been omitted given the context of the compileTimeProperties.
+   *
+   * @param compileTimeProperties the static compile time properties.
+   * @param type                  the name of the java type.
+   * @param member                the name of the member if any else the empty string.
+   * @return true if the symbol should be omitted.
+   */
   public boolean matches( @Nonnull final Map<String, String> compileTimeProperties,
                           @Nonnull final String type,
                           @Nonnull final String member )
