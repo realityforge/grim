@@ -93,6 +93,8 @@ define 'grim' do
           :linksource => true,
           :link => %w(https://docs.oracle.com/javase/8/docs/api)    )
 
+  cleanup_javadocs(project, 'grim')
+
   iml.excluded_directories << project._('tmp')
 
   ipr.add_default_testng_configuration(:jvm_args => '-ea -Dgrim.output_fixture_data=false -Dgrim.fixture_dir=processor/src/test/resources')
