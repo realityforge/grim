@@ -6,10 +6,9 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation containing rules under which symbols matching a pattern are to be omitted from the generated javascript.
- * This annotation is applied to the class type and applies to all nested members.
  */
 @Documented
-@Target( ElementType.TYPE )
+@Target( ElementType.PACKAGE )
 public @interface OmitPatterns
 {
   /**

@@ -11,15 +11,23 @@ import java.lang.annotation.Target;
  */
 @Documented
 @Repeatable( OmitPatterns.class )
-@Target( ElementType.TYPE )
+@Target( ElementType.PACKAGE )
 public @interface OmitPattern
 {
+  /**
+   * A regular expression used to match types to omit.
+   * If not specified then it will default to the package which is annotated with type.
+   *
+   * @return a regular expression used to match types to omit.
+   */
+  String type() default "<default>";
+
   /**
    * A regular expression used to match symbols to omit.
    *
    * @return a regular expression used to match symbols to omit.
    */
-  String pattern();
+  String symbol() default "<default>";
 
   /**
    * The symbol should be omitted unless this expression is true.
