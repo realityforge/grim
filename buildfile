@@ -73,7 +73,6 @@ define 'grim' do
           ant.taskdef :name => 'shade', :classname => 'org.realityforge.ant.shade.Shade', :classpath => artifact.to_s
           ant.shade :jar => f.to_s, :uberJar => shaded_jar do
             ant.relocation :pattern => 'com.google', :shadedPattern => 'grim.processor.vendor.google'
-            ant.relocation :pattern => 'org.glassfish', :shadedPattern => 'grim.processor.vendor.glassfish'
           end
         end
         FileUtils.mv shaded_jar, f.to_s
