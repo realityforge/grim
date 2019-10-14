@@ -3,6 +3,7 @@ repositories:
    - https://repo.maven.apache.org/maven2
    - https://stocksoftware.artifactoryonline.com/stocksoftware/public
    - https://stocksoftware.artifactoryonline.com/stocksoftware/oss
+   - https://stocksoftware.jfrog.io/stocksoftware/thirdparty-local
    - https://stocksoftware.artifactoryonline.com/stocksoftware/staging
 
 artifacts:
