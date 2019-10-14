@@ -19,6 +19,8 @@ define 'grim' do
 
   desc 'The annotations'
   define 'annotations' do
+    gwt_enhance(project, :extra_deps => [:javax_annotation])
+
     package(:jar)
     package(:sources)
     package(:javadoc)
