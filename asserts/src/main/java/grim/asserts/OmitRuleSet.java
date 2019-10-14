@@ -20,7 +20,7 @@ public final class OmitRuleSet
   }
 
   @Nonnull
-  Collection<OmitRule> getRules()
+  public Collection<OmitRule> getRules()
   {
     return _rules;
   }
