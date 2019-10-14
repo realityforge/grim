@@ -87,7 +87,7 @@ define 'grim' do
     iml.test_source_directories << _('src/test/fixtures/input')
   end
 
-  doc.from(projects(%w(annotations))).
+  doc.from(projects(%w(annotations asserts processor))).
     using(:javadoc,
           :windowtitle => 'Grim API Documentation',
           :linksource => true,
