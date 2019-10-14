@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
@@ -124,8 +125,19 @@ public final class GrimProcessor
   private void process( @Nonnull final TypeElement element )
     throws IOException
   {
-    final FileObject resource = processingEnv.getFiler()
-      .createResource( StandardLocation.CLASS_OUTPUT, "", toGrimJsonFilename( element ), element );
+    writeJsonResource( element, toGrimJsonFilename( element ), g -> {
+      processOmitClinit( element, g );
+      processOmitType( element, g );
+      processOmitPattern( element, g );
+      processOmitSymbol( element, g );
+    } );
+  }
+
+  private void writeJsonResource( @Nonnull final Element element,
+                                  @Nonnull final String filename,
+                                  @Nonnull final Consumer<JsonGenerator> action )
+    throws IOException
+  {
     final Map<String, Object> properties = new HashMap<>();
     properties.put( JsonGenerator.PRETTY_PRINTING, true );
     final JsonGeneratorFactory generatorFactory = Json.createGeneratorFactory( properties );
@@ -134,17 +146,24 @@ public final class GrimProcessor
     final JsonGenerator g = generatorFactory.createGenerator( baos );
     g.writeStartArray();
 
-    processOmitClinit( element, g );
-    processOmitType( element, g );
-    processOmitPattern( element, g );
-    processOmitSymbol( element, g );
+    action.accept( g );
 
     g.writeEnd();
     g.close();
 
+    writeResource( filename, formatJson( baos.toString() ), element );
+  }
+
+  private void writeResource( @Nonnull final String filename,
+                              @Nonnull final String content,
+                              @Nonnull final Element element )
+    throws IOException
+  {
+    final FileObject resource =
+      processingEnv.getFiler().createResource( StandardLocation.CLASS_OUTPUT, "", filename, element );
     try ( final OutputStream outputStream = resource.openOutputStream() )
     {
-      outputStream.write( formatJson( baos.toString() ).getBytes( StandardCharsets.UTF_8 ) );
+      outputStream.write( content.getBytes( StandardCharsets.UTF_8 ) );
     }
     catch ( final IOException e )
     {
