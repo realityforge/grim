@@ -49,6 +49,13 @@ import static javax.tools.Diagnostic.Kind.*;
 public final class GrimProcessor
   extends AbstractProcessor
 {
+  @FunctionalInterface
+  private interface Action
+  {
+    void call()
+      throws Exception;
+  }
+
   @Nonnull
   private HashSet<TypeElement> _deferred = new HashSet<>();
 
@@ -96,29 +103,34 @@ public final class GrimProcessor
   {
     for ( final TypeElement element : elements )
     {
-      try
-      {
-        process( element );
-      }
-      catch ( final IOException ioe )
-      {
-        processingEnv.getMessager().printMessage( ERROR, ioe.getMessage(), element );
-      }
-      catch ( final Throwable e )
-      {
-        final StringWriter sw = new StringWriter();
-        e.printStackTrace( new PrintWriter( sw ) );
-        sw.flush();
+      processAction( element, () -> process( element ) );
+    }
+  }
 
-        final String message =
-          "Unexpected error will running the " + getClass().getName() + " processor. This has " +
-          "resulted in a failure to process the code and has left the compiler in an invalid " +
-          "state. Please report the failure to the developers so that it can be fixed.\n" +
-          " Report the error at: https://github.com/realityforge/grim/issues\n" +
-          "\n\n" +
-          sw.toString();
-        processingEnv.getMessager().printMessage( ERROR, message, element );
-      }
+  private void processAction( @Nonnull final Element element, @Nonnull final Action action )
+  {
+    try
+    {
+      action.call();
+    }
+    catch ( final IOException ioe )
+    {
+      processingEnv.getMessager().printMessage( ERROR, ioe.getMessage(), element );
+    }
+    catch ( final Throwable e )
+    {
+      final StringWriter sw = new StringWriter();
+      e.printStackTrace( new PrintWriter( sw ) );
+      sw.flush();
+
+      final String message =
+        "Unexpected error will running the " + getClass().getName() + " processor. This has " +
+        "resulted in a failure to process the code and has left the compiler in an invalid " +
+        "state. Please report the failure to the developers so that it can be fixed.\n" +
+        " Report the error at: https://github.com/realityforge/grim/issues\n" +
+        "\n\n" +
+        sw.toString();
+      processingEnv.getMessager().printMessage( ERROR, message, element );
     }
   }
 
