@@ -1,7 +1,9 @@
 package grim.annotations;
 
 import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Repeatable;
+import java.lang.annotation.Target;
 
 /**
  * Annotation indicating symbols matching pattern should be omitted from generated javascript.
@@ -9,6 +11,7 @@ import java.lang.annotation.Repeatable;
  */
 @Documented
 @Repeatable( OmitPatterns.class )
+@Target( ElementType.TYPE )
 public @interface OmitPattern
 {
   /**
