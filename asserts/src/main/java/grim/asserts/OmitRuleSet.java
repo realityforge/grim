@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * A collection of OmitRules.
@@ -35,7 +36,7 @@ public final class OmitRuleSet
   @Nonnull
   public static OmitRuleSet loadFromClassLoader( @Nonnull final ClassLoader classLoader )
   {
-    return new OmitRuleSet( OmitRuleLoader.loadFromClassLoader( classLoader, null ) );
+    return loadFromClassLoader( classLoader, null );
   }
 
   /**
@@ -43,14 +44,14 @@ public final class OmitRuleSet
    * The rules are stored files with the suffix ".grim.json" in the standard path "META-INF/grim/*".
    *
    * @param classLoader the classloader.
-   * @param filter      the filter.
+   * @param filter      the filter if any.
    * @return the collection of rules loaded from the Classloader.
    */
   @Nonnull
   public static OmitRuleSet loadFromClassLoader( @Nonnull final ClassLoader classLoader,
-                                                 @Nonnull final Predicate<String> filter )
+                                                 @Nullable final Predicate<String> filter )
   {
-    return new OmitRuleSet( OmitRuleLoader.loadFromClassLoader( classLoader, Objects.requireNonNull( filter ) ) );
+    return new OmitRuleSet( OmitRuleLoader.loadFromClassLoader( classLoader, filter ) );
   }
 
   /**
