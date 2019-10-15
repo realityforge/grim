@@ -12,6 +12,9 @@ complete as there is too much un-said.
 
 * Handling GWT specific mangling of member names such as `equals()` -> `$equals()`
 
+* Add a separate module containing a GWT Linker that emits the compile time properties for each permutation.
+  This would be used to help determine what tests need to be run for each application.
+
 * Simplify infrastructure so that it is trivial for each application to test it's own output
   applying rules from all included libraries.
 
