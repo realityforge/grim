@@ -64,8 +64,15 @@ final class OmitRuleLoader
     {
       throw new IOException( "Failed to locate grim rules for resource " + resourceFilename );
     }
+    return resourceStream( resourceStream );
+  }
+
+  @Nonnull
+  private static List<OmitRule> resourceStream( @Nonnull final InputStream inputStream )
+    throws IOException
+  {
     final List<OmitRule> rules = new ArrayList<>();
-    try ( final JsonReader reader = Json.createReader( resourceStream ) )
+    try ( final JsonReader reader = Json.createReader( inputStream ) )
     {
       final JsonArray ruleArray = reader.readArray();
       final int size = ruleArray.size();
