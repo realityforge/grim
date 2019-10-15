@@ -49,7 +49,7 @@ final class OmitRuleLoader
         {
           throw new IOException( "Failed to locate grim rules for resource " + resourceName );
         }
-        rules.addAll( resourceStream( resourceStream ) );
+        rules.addAll( loadOmitRules( resourceStream ) );
       }
       catch ( final IOException ioe )
       {
@@ -91,7 +91,7 @@ final class OmitRuleLoader
   }
 
   @Nonnull
-  private static List<OmitRule> resourceStream( @Nonnull final InputStream inputStream )
+  private static List<OmitRule> loadOmitRules( @Nonnull final InputStream inputStream )
     throws IOException
   {
     final List<OmitRule> rules = new ArrayList<>();
