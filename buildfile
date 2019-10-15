@@ -39,6 +39,7 @@ define 'grim' do
                  :javacsv,
                  :testng,
                  :symbolmap
+    test.using :testng
 
     package(:jar)
     package(:sources)
@@ -51,6 +52,7 @@ define 'grim' do
                  :javax_json,
                  :javax_annotation
 
+    test.using :testng
     test.with :compile_testing,
               Java.tools_jar,
               :guava,
