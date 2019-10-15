@@ -8,6 +8,11 @@ complete as there is too much un-said.
 
 * Add mechanisms for merging multiple ruleSets into a single RuleSet.
 
+* Add a set of `Keep*` patterns that are a higher priority than `Omit*` style rules. That way we can declare
+  `@OmitPattern(pattern="^\\$clinit$")` but add a `@KeepClinit` on the few classes where clinits are valid.
+  This makes it much easier in projects like Arez where we can very precisely control where it is valid to
+  retain java code elements.
+
 * Apply ruleset to output using gwt-symbolmap
 
 * Handling GWT specific mangling of member names such as `equals()` -> `$equals()`
