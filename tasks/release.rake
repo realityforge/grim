@@ -118,6 +118,7 @@ HEADER
       start = changelog.index("\n", start + 1)
 
       end_index = changelog.index('### [v', start)
+      end_index = changelog.length if end_index.nil?
 
       changes = changelog[start, end_index - start]
 
@@ -125,11 +126,14 @@ HEADER
 
       tag = "v#{ENV['PRODUCT_VERSION']}"
 
+      version_parts = ENV['PRODUCT_VERSION'].split('.')
+      prerelease = '0' == version_parts[0]
+
       require 'octokit'
 
       client = Octokit::Client.new(:netrc => true, :auto_paginate => true)
       client.login
-      client.create_release('realityforge/grim', tag, :name => tag, :body => changes, :draft => false, :prerelease => true)
+      client.create_release('realityforge/grim', tag, :name => tag, :body => changes, :draft => false, :prerelease => prerelease)
 
       candidates = client.list_milestones('realityforge/grim').select {|m| m[:title].to_s == tag}
       unless candidates.empty?
