@@ -1,5 +1,6 @@
 package grim.asserts;
 
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -54,6 +55,37 @@ public final class OmitRuleSet
                                                  @Nullable final Predicate<String> filter )
   {
     return new OmitRuleSet( OmitRuleLoader.loadFromClassLoader( classLoader, filter ) );
+  }
+
+  /**
+   * Load all grim rules from the archive specified.
+   * The rules are stored files with the suffix ".grim.json" in the standard path "META-INF/grim/*".
+   * The archive is expected to be a jar file.
+   *
+   * @param archivePath the path to the archive.
+   * @return the collection of rules loaded from the Archive.
+   * @see #loadFromArchive(Path, Predicate)
+   */
+  @Nonnull
+  public static OmitRuleSet loadFromArchive( @Nonnull final Path archivePath )
+  {
+    return loadFromArchive( archivePath, null );
+  }
+
+  /**
+   * Load all grim rules from the archive specified that have classnames that match the specified filter.
+   * The rules are stored files with the suffix ".grim.json" in the standard path "META-INF/grim/*".
+   * The archive is expected to be a jar file.
+   *
+   * @param archivePath the path to the archive.
+   * @param filter      the filter if any.
+   * @return the collection of rules loaded from the Archive.
+   * @see #loadFromArchive(Path)
+   */
+  @Nonnull
+  public static OmitRuleSet loadFromArchive( @Nonnull final Path archivePath, @Nullable final Predicate<String> filter )
+  {
+    return new OmitRuleSet( OmitRuleLoader.loadFromArchive( archivePath, filter ) );
   }
 
   /**

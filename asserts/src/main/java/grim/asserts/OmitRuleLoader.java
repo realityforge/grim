@@ -5,12 +5,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
+import java.util.zip.ZipFile;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.json.Json;
@@ -30,6 +35,30 @@ final class OmitRuleLoader
 
   private OmitRuleLoader()
   {
+  }
+
+  @Nonnull
+  static Collection<OmitRule> loadFromArchive( @Nonnull final Path archivePath,
+                                               @Nullable final Predicate<String> filterFn )
+  {
+    try
+    {
+      final JarFile jarFile = new JarFile( archivePath.toFile(), true, ZipFile.OPEN_READ );
+      final Predicate<String> filter = asFilter( filterFn );
+      final List<OmitRule> rules = new ArrayList<>();
+      for ( final JarEntry entry : jarFile.stream().collect( Collectors.toList() ) )
+      {
+        if ( entry.getName().startsWith( BASE_PATH ) && filter.test( entry.getName() ) )
+        {
+          rules.addAll( loadOmitRules( jarFile.getInputStream( entry ) ) );
+        }
+      }
+      return rules;
+    }
+    catch ( final IOException ioe )
+    {
+      throw new IllegalStateException( "Failed to load Grim Omit rules from " + archivePath, ioe );
+    }
   }
 
   @Nonnull
