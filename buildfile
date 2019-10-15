@@ -34,6 +34,7 @@ define 'grim' do
 
     compile.with :javax_annotation,
                  :javax_json
+
     test.using :testng
 
     package(:jar)
@@ -43,6 +44,10 @@ define 'grim' do
 
   desc 'The Annotation processor'
   define 'processor' do
+    pom.include_transitive_dependencies << artifact(:javax_annotation)
+    pom.include_transitive_dependencies << artifact(:javax_json)
+    pom.dependency_filter = Proc.new {|dep| dep[:scope].to_s != 'test' && dep[:group].to_s != 'com.google.auto'}
+
     compile.with :autocommon,
                  :javax_json,
                  :javax_annotation
