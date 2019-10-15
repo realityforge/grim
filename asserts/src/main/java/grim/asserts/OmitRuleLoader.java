@@ -59,6 +59,37 @@ final class OmitRuleLoader
     return rules;
   }
 
+  private static void collectResourceNames( @Nonnull final ClassLoader classLoader,
+                                            @Nonnull final String base,
+                                            @Nonnull final Predicate<String> acceptResource,
+                                            @Nonnull final List<String> resources )
+  {
+    final InputStream resourceStream = classLoader.getResourceAsStream( base );
+    if ( null != resourceStream )
+    {
+      try ( final BufferedReader reader = toReader( resourceStream ) )
+      {
+        String line;
+        while ( null != ( line = reader.readLine() ) )
+        {
+          final String resource = base + "/" + line;
+          if ( acceptResource.test( resource ) )
+          {
+            resources.add( resource );
+          }
+          else if ( SourceVersion.isIdentifier( line ) )
+          {
+            collectResourceNames( classLoader, resource, acceptResource, resources );
+          }
+        }
+      }
+      catch ( final IOException ioe )
+      {
+        throw new IllegalStateException( "Failed to read grim metadata directory", ioe );
+      }
+    }
+  }
+
   @Nonnull
   private static List<OmitRule> resourceStream( @Nonnull final InputStream inputStream )
     throws IOException
@@ -114,37 +145,6 @@ final class OmitRuleLoader
              final int endIndex = resource.length() - FILE_SUFFIX.length();
              return filterFn.test( resource.substring( beginIndex, endIndex ).replace( "/", "." ) );
            } );
-  }
-
-  private static void collectResourceNames( @Nonnull final ClassLoader classLoader,
-                                            @Nonnull final String base,
-                                            @Nonnull final Predicate<String> acceptResource,
-                                            @Nonnull final List<String> resources )
-  {
-    final InputStream resourceStream = classLoader.getResourceAsStream( base );
-    if ( null != resourceStream )
-    {
-      try ( final BufferedReader reader = toReader( resourceStream ) )
-      {
-        String line;
-        while ( null != ( line = reader.readLine() ) )
-        {
-          final String resource = base + "/" + line;
-          if ( acceptResource.test( resource ) )
-          {
-            resources.add( resource );
-          }
-          else if ( SourceVersion.isIdentifier( line ) )
-          {
-            collectResourceNames( classLoader, resource, acceptResource, resources );
-          }
-        }
-      }
-      catch ( final IOException ioe )
-      {
-        throw new IllegalStateException( "Failed to read grim metadata directory", ioe );
-      }
-    }
   }
 
   @Nonnull
