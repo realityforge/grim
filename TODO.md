@@ -11,3 +11,22 @@ complete as there is too much un-said.
 * Apply ruleset to output using gwt-symbolmap
 
 * Handling GWT specific mangling of member names such as `equals()` -> `$equals()`
+
+* Simplify infrastructure so that it is trivial for each application to test it's own output
+  applying rules from all included libraries.
+
+* Add Grim metadata to the toolkits.
+  - `arez-dom`
+  - `arez-promise`
+  - `arez-spytools`
+  - `react4j`
+  _ `spritz`
+  - `galdr`
+  - `replicant`
+
+* Add Grim metadata to the sample applications.
+  - `react4j-todomvc`
+  _ `react4j-flux-challenge`
+  - `react4j-drumloop`
+
+* Add some basic documentation to README
