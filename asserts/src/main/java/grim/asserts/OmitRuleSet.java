@@ -32,6 +32,7 @@ public final class OmitRuleSet
    *
    * @param classLoader the classloader.
    * @return the collection of rules loaded from the Classloader.
+   * @see #loadFromClassLoader(ClassLoader, Predicate)
    */
   @Nonnull
   public static OmitRuleSet loadFromClassLoader( @Nonnull final ClassLoader classLoader )
@@ -46,6 +47,7 @@ public final class OmitRuleSet
    * @param classLoader the classloader.
    * @param filter      the filter if any.
    * @return the collection of rules loaded from the Classloader.
+   * @see #loadFromClassLoader(ClassLoader)
    */
   @Nonnull
   public static OmitRuleSet loadFromClassLoader( @Nonnull final ClassLoader classLoader,
