@@ -44,7 +44,12 @@ final class OmitRuleLoader
     {
       try
       {
-        rules.addAll( loadOmitRules( classLoader, resourceName ) );
+        final InputStream resourceStream = classLoader.getResourceAsStream( resourceName );
+        if ( null == resourceStream )
+        {
+          throw new IOException( "Failed to locate grim rules for resource " + resourceName );
+        }
+        rules.addAll( resourceStream( resourceStream ) );
       }
       catch ( final IOException ioe )
       {
@@ -52,19 +57,6 @@ final class OmitRuleLoader
       }
     }
     return rules;
-  }
-
-  @Nonnull
-  private static List<OmitRule> loadOmitRules( @Nonnull final ClassLoader classLoader,
-                                               @Nonnull final String resourceFilename )
-    throws IOException
-  {
-    final InputStream resourceStream = classLoader.getResourceAsStream( resourceFilename );
-    if ( null == resourceStream )
-    {
-      throw new IOException( "Failed to locate grim rules for resource " + resourceFilename );
-    }
-    return resourceStream( resourceStream );
   }
 
   @Nonnull
