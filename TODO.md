@@ -6,6 +6,8 @@ complete as there is too much un-said.
 
 * Figure out a way how to support J2CL based applications.
 
+* Add mechanisms for merging multiple ruleSets into a single RuleSet.
+
 * Apply ruleset to output using gwt-symbolmap
 
 * Handling GWT specific mangling of member names such as `equals()` -> `$equals()`
