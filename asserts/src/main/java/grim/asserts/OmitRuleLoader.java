@@ -78,8 +78,7 @@ final class OmitRuleLoader
   }
 
   @Nonnull
-  private static OmitRule parseOmitRule( final int ruleIndex,
-                                         @Nonnull final JsonObject ruleObject )
+  private static OmitRule parseOmitRule( final int ruleIndex, @Nonnull final JsonObject ruleObject )
     throws IOException
   {
     final String type = ruleObject.getString( "type" );
