@@ -26,8 +26,3 @@ artifacts:
   guava: com.google.guava:guava:jar:25.0-jre
 
   javax_json: org.glassfish:javax.json:jar:1.1
-
-  testng: org.testng:testng:jar:6.11
-  jetbrains_annotations: org.realityforge.org.jetbrains.annotations:org.jetbrains.annotations:jar:1.0.0
-  javacsv: net.sourceforge.javacsv:javacsv:jar:2.1
-  symbolmap: org.realityforge.gwt.symbolmap:gwt-symbolmap:jar:0.09
