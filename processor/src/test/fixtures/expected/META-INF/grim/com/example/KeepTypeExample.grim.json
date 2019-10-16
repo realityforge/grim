@@ -1,0 +1,16 @@
+[
+  {
+    "keep": true,
+    "type": "^\\Qcom.example.KeepTypeExample\\E$",
+    "property": "arez.environment",
+    "operator": "EQ",
+    "value": "production"
+  },
+  {
+    "keep": true,
+    "type": "^\\Qcom.example.KeepTypeExample\\E$",
+    "property": "spritz.enable_spies",
+    "operator": "NEQ",
+    "value": "true"
+  }
+]

@@ -1,0 +1,15 @@
+[
+  {
+    "keep": true,
+    "type": "^\\Qcom.example.KeepConstructorExample\\E$",
+    "member": "^\\QKeepConstructorExample\\E$"
+  },
+  {
+    "keep": true,
+    "type": "^\\Qcom.example.KeepConstructorExample\\E$",
+    "member": "^\\QKeepConstructorExample\\E$",
+    "property": "galdr.enable_names",
+    "operator": "NEQ",
+    "value": "true"
+  }
+]

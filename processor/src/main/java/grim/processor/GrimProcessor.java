@@ -77,7 +77,9 @@ public final class GrimProcessor
       final String annotationName = annotation.getQualifiedName().toString();
       //noinspection IfCanBeSwitch
       if ( Constants.OMIT_PATTERN_CLASSNAME.equals( annotationName ) ||
-           Constants.OMIT_PATTERNS_CLASSNAME.equals( annotationName ) )
+           Constants.OMIT_PATTERNS_CLASSNAME.equals( annotationName ) ||
+           Constants.KEEP_PATTERN_CLASSNAME.equals( annotationName ) ||
+           Constants.KEEP_PATTERNS_CLASSNAME.equals( annotationName ) )
       {
         final Set<? extends Element> elements = env.getElementsAnnotatedWith( annotation );
         for ( final Element element : elements )
@@ -87,7 +89,10 @@ public final class GrimProcessor
       }
       else if ( Constants.OMIT_CLINIT_CLASSNAME.equals( annotationName ) ||
                 Constants.OMIT_TYPE_CLASSNAME.equals( annotationName ) ||
-                Constants.OMIT_TYPES_CLASSNAME.equals( annotationName ) )
+                Constants.OMIT_TYPES_CLASSNAME.equals( annotationName ) ||
+                Constants.KEEP_CLINIT_CLASSNAME.equals( annotationName ) ||
+                Constants.KEEP_TYPE_CLASSNAME.equals( annotationName ) ||
+                Constants.KEEP_TYPES_CLASSNAME.equals( annotationName ) )
       {
         final Set<? extends Element> elements = env.getElementsAnnotatedWith( annotation );
         for ( final Element element : elements )
@@ -97,7 +102,9 @@ public final class GrimProcessor
         }
       }
       else if ( Constants.OMIT_SYMBOLS_CLASSNAME.equals( annotationName ) ||
-                Constants.OMIT_SYMBOL_CLASSNAME.equals( annotationName ) )
+                Constants.OMIT_SYMBOL_CLASSNAME.equals( annotationName ) ||
+                Constants.KEEP_SYMBOLS_CLASSNAME.equals( annotationName ) ||
+                Constants.KEEP_SYMBOL_CLASSNAME.equals( annotationName ) )
       {
         final Set<? extends Element> elements = env.getElementsAnnotatedWith( annotation );
         for ( final Element element : elements )
@@ -108,7 +115,7 @@ public final class GrimProcessor
       }
     }
     processPackages( packagesToProcess );
-    processTypes( getElementsToProcess( typesToProcess.values() ) );
+    processTypeElements( getElementsToProcess( typesToProcess.values() ) );
     if ( env.getRootElements().isEmpty() && !_deferred.isEmpty() )
     {
       _deferred.forEach( this::processingErrorMessage );
@@ -128,10 +135,10 @@ public final class GrimProcessor
   private void process( @Nonnull final PackageElement element )
     throws IOException
   {
-    writeJsonResource( element, toGrimJsonFilename( element ), g -> processOmitPattern( element, g ) );
+    writeJsonResource( element, toGrimJsonFilename( element ), g -> processPatterns( element, g ) );
   }
 
-  private void processTypes( @Nonnull final Collection<TypeElement> elements )
+  private void processTypeElements( @Nonnull final Collection<TypeElement> elements )
   {
     for ( final TypeElement element : elements )
     {
@@ -170,9 +177,9 @@ public final class GrimProcessor
     throws IOException
   {
     writeJsonResource( element, toGrimJsonFilename( element ), g -> {
-      processOmitClinit( element, g );
-      processOmitType( element, g );
-      processOmitSymbol( element, g );
+      processClinits( element, g );
+      processTypes( element, g );
+      processSymbols( element, g );
     } );
   }
 
@@ -215,38 +222,72 @@ public final class GrimProcessor
     }
   }
 
-  private void processOmitClinit( @Nonnull final TypeElement element, @Nonnull final JsonGenerator g )
+  private void processClinits( @Nonnull final TypeElement element, @Nonnull final JsonGenerator g )
   {
-    final AnnotationMirror omitClinit = findAnnotationByType( element, Constants.OMIT_CLINIT_CLASSNAME );
-    if ( null != omitClinit )
+    processClinit( element, Constants.OMIT_CLINIT_CLASSNAME, g );
+    processClinit( element, Constants.KEEP_CLINIT_CLASSNAME, g );
+  }
+
+  private void processClinit( @Nonnull final TypeElement element,
+                              @Nonnull final String annotationName,
+                              @Nonnull final JsonGenerator g )
+  {
+    final AnnotationMirror annotation = findAnnotationByType( element, annotationName );
+    if ( null != annotation )
     {
       g.writeStartObject();
+      if ( Constants.KEEP_CLINIT_CLASSNAME.equals( annotationName ) )
+      {
+        g.write( "keep", true );
+      }
       g.write( "type", toTypePattern( element ) );
       g.write( "member", quotedName( "$clinit" ) );
       g.writeEnd();
     }
   }
 
-  private void processOmitType( @Nonnull final TypeElement element, @Nonnull final JsonGenerator g )
+  private void processTypes( @Nonnull final TypeElement element, @Nonnull final JsonGenerator g )
   {
-    final List<AnnotationMirror> omitTypes =
-      getRepeatingAnnotations( element, Constants.OMIT_TYPES_CLASSNAME, Constants.OMIT_TYPE_CLASSNAME );
-    for ( final AnnotationMirror annotation : omitTypes )
+    processTypeAnnotations( element, Constants.OMIT_TYPES_CLASSNAME, Constants.OMIT_TYPE_CLASSNAME, g );
+    processTypeAnnotations( element, Constants.KEEP_TYPES_CLASSNAME, Constants.KEEP_TYPE_CLASSNAME, g );
+  }
+
+  private void processTypeAnnotations( @Nonnull final TypeElement element,
+                                       @Nonnull final String containerAnnotation,
+                                       @Nonnull final String annotationName,
+                                       @Nonnull final JsonGenerator g )
+  {
+    for ( final AnnotationMirror annotation : getRepeatingAnnotations( element, containerAnnotation, annotationName ) )
     {
       g.writeStartObject();
+      if ( Constants.KEEP_TYPE_CLASSNAME.equals( annotationName ) )
+      {
+        g.write( "keep", true );
+      }
       g.write( "type", toTypePattern( element ) );
-      processConditions( element, annotation, "@OmitType", g );
+      processConditions( element, annotation, annotationName, g );
       g.writeEnd();
     }
   }
 
-  private void processOmitPattern( @Nonnull final PackageElement element, @Nonnull final JsonGenerator g )
+  private void processPatterns( @Nonnull final PackageElement element, @Nonnull final JsonGenerator g )
   {
-    final List<AnnotationMirror> omitTypes =
-      getRepeatingAnnotations( element, Constants.OMIT_PATTERNS_CLASSNAME, Constants.OMIT_PATTERN_CLASSNAME );
-    for ( final AnnotationMirror annotation : omitTypes )
+    processPatternAnnotations( element, Constants.OMIT_PATTERNS_CLASSNAME, Constants.OMIT_PATTERN_CLASSNAME, g );
+    processPatternAnnotations( element, Constants.KEEP_PATTERNS_CLASSNAME, Constants.KEEP_PATTERN_CLASSNAME, g );
+  }
+
+  private void processPatternAnnotations( @Nonnull final PackageElement element,
+                                          @Nonnull final String containerAnnotation,
+                                          @Nonnull final String annotationName,
+                                          @Nonnull final JsonGenerator g )
+  {
+    for ( final AnnotationMirror annotation : getRepeatingAnnotations( element, containerAnnotation, annotationName ) )
     {
       g.writeStartObject();
+      if ( Constants.KEEP_PATTERN_CLASSNAME.equals( annotationName ) )
+      {
+        g.write( "keep", true );
+      }
       final String typePattern =
         (String) getAnnotationValue( annotation, "type" ).getValue();
       final String actualTypePattern =
@@ -260,34 +301,54 @@ public final class GrimProcessor
       {
         g.write( "member", symbolPattern );
       }
-      processConditions( element, annotation, "@OmitPattern", g );
+      processConditions( element, annotation, annotationName, g );
       g.writeEnd();
     }
   }
 
-  private void processOmitSymbol( @Nonnull final TypeElement element, @Nonnull final JsonGenerator g )
+  private void processSymbols( @Nonnull final TypeElement element, @Nonnull final JsonGenerator g )
   {
     for ( final Element child : element.getEnclosedElements() )
     {
       if ( child instanceof ExecutableElement || child instanceof VariableElement )
       {
-        processOmitSymbol( element, child, g );
+        processSymbol( element, child, g );
       }
     }
   }
 
-  private void processOmitSymbol( @Nonnull final TypeElement typeElement,
-                                  @Nonnull final Element element,
-                                  @Nonnull final JsonGenerator g )
+  private void processSymbol( @Nonnull final TypeElement typeElement,
+                              @Nonnull final Element element,
+                              @Nonnull final JsonGenerator g )
   {
-    final List<AnnotationMirror> omitTypes =
-      getRepeatingAnnotations( element, Constants.OMIT_SYMBOLS_CLASSNAME, Constants.OMIT_SYMBOL_CLASSNAME );
-    for ( final AnnotationMirror annotation : omitTypes )
+    processSymbolAnnotations( typeElement,
+                              element,
+                              Constants.OMIT_SYMBOLS_CLASSNAME,
+                              Constants.OMIT_SYMBOL_CLASSNAME,
+                              g );
+    processSymbolAnnotations( typeElement,
+                              element,
+                              Constants.KEEP_SYMBOLS_CLASSNAME,
+                              Constants.KEEP_SYMBOL_CLASSNAME,
+                              g );
+  }
+
+  private void processSymbolAnnotations( @Nonnull final TypeElement typeElement,
+                                         @Nonnull final Element element,
+                                         @Nonnull final String containerAnnotation,
+                                         @Nonnull final String annotationName,
+                                         @Nonnull final JsonGenerator g )
+  {
+    for ( final AnnotationMirror annotation : getRepeatingAnnotations( element, containerAnnotation, annotationName ) )
     {
       g.writeStartObject();
+      if ( Constants.KEEP_SYMBOL_CLASSNAME.equals( annotationName ) )
+      {
+        g.write( "keep", true );
+      }
       g.write( "type", toTypePattern( typeElement ) );
       g.write( "member", getMemberName( element ) );
-      processConditions( element, annotation, "@OmitSymbol", g );
+      processConditions( element, annotation, annotationName, g );
       g.writeEnd();
     }
   }

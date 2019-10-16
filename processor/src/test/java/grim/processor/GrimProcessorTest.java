@@ -13,6 +13,12 @@ public class GrimProcessorTest
   {
     return new Object[][]
       {
+        new Object[]{ "com.example.KeepClinitExample" },
+        new Object[]{ "com.example.KeepConstructorExample" },
+        new Object[]{ "com.example.KeepFieldExample" },
+        new Object[]{ "com.example.KeepMethodExample" },
+        new Object[]{ "com.example.package-info" },
+        new Object[]{ "com.example.KeepTypeExample" },
         new Object[]{ "com.example.OmitClinitExample" },
         new Object[]{ "com.example.OmitConstructorExample" },
         new Object[]{ "com.example.OmitFieldExample" },

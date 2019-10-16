@@ -1,0 +1,15 @@
+[
+  {
+    "keep": true,
+    "type": "^\\Qcom.example.KeepFieldExample\\E$",
+    "member": "^\\Q_name\\E$"
+  },
+  {
+    "keep": true,
+    "type": "^\\Qcom.example.KeepFieldExample\\E$",
+    "member": "^\\Q_score\\E$",
+    "property": "galdr.environment",
+    "operator": "NEQ",
+    "value": "development"
+  }
+]

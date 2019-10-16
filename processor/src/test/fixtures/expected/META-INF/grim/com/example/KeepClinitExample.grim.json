@@ -1,0 +1,7 @@
+[
+  {
+    "keep": true,
+    "type": "^\\Qcom.example.KeepClinitExample\\E$",
+    "member": "^\\Q$clinit\\E$"
+  }
+]
