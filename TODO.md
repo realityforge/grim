@@ -21,8 +21,6 @@ complete as there is too much un-said.
 
 * Apply ruleset to output using gwt-symbolmap
 
-* Handling GWT specific mangling of member names such as `equals()` -> `$equals()`
-
 * Add a separate module containing a GWT Linker that emits the compile time properties for each permutation.
   This would be used to help determine what tests need to be run for each application.
 
