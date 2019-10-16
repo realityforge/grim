@@ -22,17 +22,17 @@ The Maven dependency is:
 <dependency>
   <groupId>org.realityforge.grim</groupId>
   <artifactId>grim-annotations</artifactId>
-  <version>0.02</version>
+  <version>0.03</version>
 </dependency>
 <dependency>
   <groupId>org.realityforge.grim</groupId>
   <artifactId>grim-processor</artifactId>
-  <version>0.02</version>
+  <version>0.03</version>
 </dependency>
 <dependency>
   <groupId>org.realityforge.grim</groupId>
   <artifactId>grim-asserts</artifactId>
-  <version>0.02</version>
+  <version>0.03</version>
 </dependency>
 ```
 
