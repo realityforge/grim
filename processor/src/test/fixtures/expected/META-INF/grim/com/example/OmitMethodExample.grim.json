@@ -1,11 +1,11 @@
 [
   {
     "type": "^\\Qcom.example.OmitMethodExample\\E$",
-    "member": "^\\QgetName\\E$"
+    "member": "^\\$?\\QgetName\\E$"
   },
   {
     "type": "^\\Qcom.example.OmitMethodExample\\E$",
-    "member": "^\\QgetScore\\E$",
+    "member": "^\\$?\\QgetScore\\E$",
     "property": "galdr.enable_scores",
     "operator": "NEQ",
     "value": "true"

@@ -285,7 +285,11 @@ public final class GrimProcessor
     {
       g.writeStartObject();
       g.write( "type", toTypePattern( typeElement ) );
-      g.write( "member", quotedName( element.getSimpleName().toString() ) );
+      final String value =
+        element instanceof ExecutableElement ?
+        quotedMethodName( element.getSimpleName().toString() ) :
+        quotedName( element.getSimpleName().toString() );
+      g.write( "member", value );
       processConditions( element, annotation, "@OmitSymbol", g );
       g.writeEnd();
     }
@@ -370,6 +374,14 @@ public final class GrimProcessor
   private String quotedName( @Nonnull final String string )
   {
     return "^" + Pattern.quote( string ) + "$";
+  }
+
+  @Nonnull
+  private String quotedMethodName( @Nonnull final String string )
+  {
+    // A very common transform in the GWT compiler is to de-virtualize a method. In which case the original method
+    // is removed and a new one is created with the $ prefix. So for methods we try to handle this scenario.
+    return "^\\$?" + Pattern.quote( string ) + "$";
   }
 
   private void processingErrorMessage( @Nonnull final TypeElement target )
