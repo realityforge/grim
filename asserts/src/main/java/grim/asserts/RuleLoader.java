@@ -141,6 +141,7 @@ final class RuleLoader
     throws IOException
   {
     final String type = ruleObject.getString( "type" );
+    final boolean omit = !ruleObject.getBoolean( "keep", false );
     final String member = ruleObject.getString( "member", null );
     final String property = ruleObject.getString( "property", null );
     final String value = ruleObject.getString( "value", null );
@@ -152,7 +153,8 @@ final class RuleLoader
     }
     try
     {
-      return new Rule( Pattern.compile( type ),
+      return new Rule( omit,
+                       Pattern.compile( type ),
                        null == member ? null : Pattern.compile( member ),
                        null == property ?
                        null :

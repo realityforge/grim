@@ -12,6 +12,10 @@ import javax.annotation.Nullable;
 public final class Rule
 {
   /**
+   * Does the rule indicate symbol should be omitted or kept.
+   */
+  private final boolean _omit;
+  /**
    * A regular expression to match the type.
    */
   @Nonnull
@@ -27,11 +31,35 @@ public final class Rule
   @Nullable
   private final Condition _condition;
 
-  public Rule( @Nonnull final Pattern type, @Nullable final Pattern member, @Nullable final Condition condition )
+  public Rule( final boolean omit,
+               @Nonnull final Pattern type,
+               @Nullable final Pattern member,
+               @Nullable final Condition condition )
   {
+    _omit = omit;
     _type = Objects.requireNonNull( type );
     _member = member;
     _condition = condition;
+  }
+
+  /**
+   * Return true if the rule indicates a symbol to omit.
+   *
+   * @return true if the rule indicates a symbol to omit.
+   */
+  public boolean isOmitRule()
+  {
+    return _omit;
+  }
+
+  /**
+   * Return true if the rule indicates a symbol to keep.
+   *
+   * @return true if the rule indicates a symbol to keep.
+   */
+  public boolean isKeepRule()
+  {
+    return !_omit;
   }
 
   /**
