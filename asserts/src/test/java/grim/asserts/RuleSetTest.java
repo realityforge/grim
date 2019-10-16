@@ -9,6 +9,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +36,28 @@ public class RuleSetTest
       Files.walk( _baseDirectory ).sorted( Comparator.reverseOrder() ).map( Path::toFile ).forEach( File::delete );
       _baseDirectory = null;
     }
+  }
+
+  @Test
+  public void combine()
+  {
+    final Rule rule1 = new Rule( true, Pattern.compile( ".*" ), null, null );
+    final Rule rule2 = new Rule( false, Pattern.compile( ".*" ), null, null );
+    final Rule rule3 = new Rule( true, Pattern.compile( ".*" ), null, null );
+    final Rule rule4 = new Rule( false, Pattern.compile( ".*" ), null, null );
+    final RuleSet rules1 = new RuleSet( Arrays.asList( rule1, rule2 ) );
+    final RuleSet rules2 = new RuleSet( Arrays.asList( rule3, rule4 ) );
+
+    final RuleSet rules3 = RuleSet.combine( rules1, rules2 );
+
+    final Collection<Rule> omitRules = rules3.getOmitRules();
+    assertEquals( omitRules.size(), 2 );
+    assertTrue( omitRules.contains( rule1 ) );
+    assertTrue( omitRules.contains( rule3 ) );
+    final Collection<Rule> keepRules = rules3.getKeepRules();
+    assertEquals( keepRules.size(), 2 );
+    assertTrue( keepRules.contains( rule2 ) );
+    assertTrue( keepRules.contains( rule4 ) );
   }
 
   @Test

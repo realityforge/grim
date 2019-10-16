@@ -6,8 +6,6 @@ complete as there is too much un-said.
 
 * Figure out a way how to support J2CL based applications.
 
-* Add mechanisms for merging multiple ruleSets into a single RuleSet.
-
 * Apply ruleset to output using gwt-symbolmap
 
 * Add a separate module containing a GWT Linker that emits the compile time properties for each permutation.

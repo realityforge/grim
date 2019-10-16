@@ -1,10 +1,13 @@
 package grim.asserts;
 
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -24,7 +27,7 @@ public final class RuleSet
   @Nonnull
   private final Collection<Rule> _keepRules;
 
-  private RuleSet( @Nonnull final Collection<Rule> rules )
+  RuleSet( @Nonnull final Collection<Rule> rules )
   {
     _omitRules = rules.stream().filter( Rule::isOmitRule ).collect( Collectors.toList() );
     _keepRules = rules.stream().filter( Rule::isKeepRule ).collect( Collectors.toList() );
@@ -40,6 +43,21 @@ public final class RuleSet
   Collection<Rule> getKeepRules()
   {
     return _keepRules;
+  }
+
+  /**
+   * Combine multiple RuleSets into one RuleSet.
+   *
+   * @param ruleSets the rule sets to merge.
+   * @return the merged RuleSet.
+   */
+  @Nonnull
+  public static RuleSet combine( @Nonnull final RuleSet... ruleSets )
+  {
+    final List<Rule> rules = Arrays.stream( ruleSets )
+      .flatMap( ruleSet -> Stream.concat( ruleSet.getOmitRules().stream(), ruleSet.getKeepRules().stream() ) )
+      .collect( Collectors.toList() );
+    return new RuleSet( rules );
   }
 
   /**

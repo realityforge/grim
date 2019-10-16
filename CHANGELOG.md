@@ -6,6 +6,7 @@
 * Fixed a bug where the `@OmitSymbol` annotation on a constructor would fail to match the constructor as the GWT compiler names constructors using a different convention from javac. Javac uses `<init>` while GWT uses the simple name of the enclosing type.
 * Rename `grim.asserts.OmitRuleSet` to `grim.asserts.RuleSet` and `grim.asserts.OmitRule` to `grim.asserts.Rule` in preparation for supporting "Keep" rules.
 * Add `@Keep*` annotations that mirror the existing `@Omit*` annotations. The keep rules are used to override an `@Omit*` rule. This makes it easy to add a broad `@Omit*` that a large library and just add `@Keep*` in the few places where the `@Omit*` annotation does not apply.
+* Add the `RuleSet.combine(RuleSet...)` method for combining multiple `RuleSet` instances into a single `RuleSet`.
 
 ### [v0.01](https://github.com/realityforge/grim/tree/v0.01) (2019-10-15) · [Full Changelog](https://github.com/realityforge/grim/compare/v0.00...v0.01)
 
