@@ -31,6 +31,7 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
@@ -285,13 +286,27 @@ public final class GrimProcessor
     {
       g.writeStartObject();
       g.write( "type", toTypePattern( typeElement ) );
-      final String value =
-        element instanceof ExecutableElement ?
-        quotedMethodName( element.getSimpleName().toString() ) :
-        quotedName( element.getSimpleName().toString() );
-      g.write( "member", value );
+      g.write( "member", getMemberName( element ) );
       processConditions( element, annotation, "@OmitSymbol", g );
       g.writeEnd();
+    }
+  }
+
+  @Nonnull
+  private String getMemberName( @Nonnull final Element element )
+  {
+    if ( ElementKind.CONSTRUCTOR == element.getKind() )
+    {
+      return quotedName( element.getEnclosingElement().getSimpleName().toString() );
+    }
+    else if ( ElementKind.METHOD == element.getKind() )
+    {
+      return quotedMethodName( element.getSimpleName().toString() );
+    }
+    else
+    {
+      assert ElementKind.FIELD == element.getKind();
+      return quotedName( element.getSimpleName().toString() );
     }
   }
 
