@@ -54,7 +54,7 @@ public final class RuleSet
   public static RuleSet loadFromClassLoader( @Nonnull final ClassLoader classLoader,
                                              @Nullable final Predicate<String> filter )
   {
-    return new RuleSet( OmitRuleLoader.loadFromClassLoader( classLoader, filter ) );
+    return new RuleSet( RuleLoader.loadFromClassLoader( classLoader, filter ) );
   }
 
   /**
@@ -85,7 +85,7 @@ public final class RuleSet
   @Nonnull
   public static RuleSet loadFromArchive( @Nonnull final Path archivePath, @Nullable final Predicate<String> filter )
   {
-    return new RuleSet( OmitRuleLoader.loadFromArchive( archivePath, filter ) );
+    return new RuleSet( RuleLoader.loadFromArchive( archivePath, filter ) );
   }
 
   /**

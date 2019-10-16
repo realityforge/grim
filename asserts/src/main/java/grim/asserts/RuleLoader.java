@@ -24,7 +24,7 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.lang.model.SourceVersion;
 
-final class OmitRuleLoader
+final class RuleLoader
 {
   @Nonnull
   private static final String BASE_PATH = "META-INF/grim";
@@ -33,7 +33,7 @@ final class OmitRuleLoader
   @Nonnull
   private static final Predicate<String> GRIM_FILE_MATCHER = r -> r.endsWith( FILE_SUFFIX );
 
-  private OmitRuleLoader()
+  private RuleLoader()
   {
   }
 
