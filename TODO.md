@@ -18,7 +18,6 @@ complete as there is too much un-said.
   - Allow `type="arez.ZoneHolder", member="$clinit"` if zones enabled
   - Disallow `type="arez.*", member="$clinit"`
 
-
 * Apply ruleset to output using gwt-symbolmap
 
 * Add a separate module containing a GWT Linker that emits the compile time properties for each permutation.
