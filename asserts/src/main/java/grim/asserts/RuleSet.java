@@ -9,14 +9,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * A collection of OmitRules.
+ * A collection of Rules.
  */
-public final class OmitRuleSet
+public final class RuleSet
 {
   @Nonnull
   private final Collection<OmitRule> _rules;
 
-  private OmitRuleSet( @Nonnull final Collection<OmitRule> rules )
+  private RuleSet( @Nonnull final Collection<OmitRule> rules )
   {
     _rules = Objects.requireNonNull( rules );
   }
@@ -36,7 +36,7 @@ public final class OmitRuleSet
    * @see #loadFromClassLoader(ClassLoader, Predicate)
    */
   @Nonnull
-  public static OmitRuleSet loadFromClassLoader( @Nonnull final ClassLoader classLoader )
+  public static RuleSet loadFromClassLoader( @Nonnull final ClassLoader classLoader )
   {
     return loadFromClassLoader( classLoader, null );
   }
@@ -51,10 +51,10 @@ public final class OmitRuleSet
    * @see #loadFromClassLoader(ClassLoader)
    */
   @Nonnull
-  public static OmitRuleSet loadFromClassLoader( @Nonnull final ClassLoader classLoader,
-                                                 @Nullable final Predicate<String> filter )
+  public static RuleSet loadFromClassLoader( @Nonnull final ClassLoader classLoader,
+                                             @Nullable final Predicate<String> filter )
   {
-    return new OmitRuleSet( OmitRuleLoader.loadFromClassLoader( classLoader, filter ) );
+    return new RuleSet( OmitRuleLoader.loadFromClassLoader( classLoader, filter ) );
   }
 
   /**
@@ -67,7 +67,7 @@ public final class OmitRuleSet
    * @see #loadFromArchive(Path, Predicate)
    */
   @Nonnull
-  public static OmitRuleSet loadFromArchive( @Nonnull final Path archivePath )
+  public static RuleSet loadFromArchive( @Nonnull final Path archivePath )
   {
     return loadFromArchive( archivePath, null );
   }
@@ -83,9 +83,9 @@ public final class OmitRuleSet
    * @see #loadFromArchive(Path)
    */
   @Nonnull
-  public static OmitRuleSet loadFromArchive( @Nonnull final Path archivePath, @Nullable final Predicate<String> filter )
+  public static RuleSet loadFromArchive( @Nonnull final Path archivePath, @Nullable final Predicate<String> filter )
   {
-    return new OmitRuleSet( OmitRuleLoader.loadFromArchive( archivePath, filter ) );
+    return new RuleSet( OmitRuleLoader.loadFromArchive( archivePath, filter ) );
   }
 
   /**

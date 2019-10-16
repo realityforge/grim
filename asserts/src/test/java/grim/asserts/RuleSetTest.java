@@ -20,7 +20,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
-public class OmitRuleSetTest
+public class RuleSetTest
 {
   private Path _baseDirectory;
 
@@ -40,7 +40,7 @@ public class OmitRuleSetTest
   public void loadFromClassLoader_noRules()
     throws Exception
   {
-    final OmitRuleSet rules = buildRuleSet();
+    final RuleSet rules = buildRuleSet();
     assertEquals( rules.getRules().size(), 0 );
   }
 
@@ -64,7 +64,7 @@ public class OmitRuleSetTest
                     "  }\n" +
                     "]\n" );
 
-    final OmitRuleSet rules = buildRuleSet();
+    final RuleSet rules = buildRuleSet();
     assertEquals( rules.getRules().size(), 1 );
 
     final OmitRule rule = rules.getRules().iterator().next();
@@ -89,7 +89,7 @@ public class OmitRuleSetTest
                     "  }\n" +
                     "]\n" );
 
-    final OmitRuleSet rules = buildRuleSet();
+    final RuleSet rules = buildRuleSet();
     assertEquals( rules.getRules().size(), 1 );
 
     final OmitRule rule = rules.getRules().iterator().next();
@@ -128,7 +128,7 @@ public class OmitRuleSetTest
 
     assertEquals( buildRuleSet().getRules().size(), 2 );
     // This next one filters out the spy rules
-    assertEquals( OmitRuleSet.loadFromClassLoader( newClassLoader(), r -> !r.startsWith( "arez.spy." ) )
+    assertEquals( RuleSet.loadFromClassLoader( newClassLoader(), r -> !r.startsWith( "arez.spy." ) )
                     .getRules()
                     .size(), 1 );
   }
@@ -185,7 +185,7 @@ public class OmitRuleSetTest
                     "  }\n" +
                     "]\n" );
 
-    final OmitRuleSet rules = buildRuleSetFromJar();
+    final RuleSet rules = buildRuleSetFromJar();
     assertEquals( rules.getRules().size(), 1 );
 
     final OmitRule rule = rules.getRules().iterator().next();
@@ -204,7 +204,7 @@ public class OmitRuleSetTest
   }
 
   @Nonnull
-  private OmitRuleSet buildRuleSetFromJar()
+  private RuleSet buildRuleSetFromJar()
     throws IOException
   {
     final Path archive = Files.createTempFile( "grim", ".jar" );
@@ -232,7 +232,7 @@ public class OmitRuleSetTest
     }
     try
     {
-      return OmitRuleSet.loadFromArchive( archive );
+      return RuleSet.loadFromArchive( archive );
     }
     finally
     {
@@ -241,10 +241,10 @@ public class OmitRuleSetTest
   }
 
   @Nonnull
-  private OmitRuleSet buildRuleSet()
+  private RuleSet buildRuleSet()
     throws IOException
   {
-    return OmitRuleSet.loadFromClassLoader( newClassLoader() );
+    return RuleSet.loadFromClassLoader( newClassLoader() );
   }
 
   @Nonnull
