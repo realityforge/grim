@@ -38,14 +38,14 @@ final class OmitRuleLoader
   }
 
   @Nonnull
-  static Collection<OmitRule> loadFromArchive( @Nonnull final Path archivePath,
-                                               @Nullable final Predicate<String> filterFn )
+  static Collection<Rule> loadFromArchive( @Nonnull final Path archivePath,
+                                           @Nullable final Predicate<String> filterFn )
   {
     try
     {
       final JarFile jarFile = new JarFile( archivePath.toFile(), true, ZipFile.OPEN_READ );
       final Predicate<String> filter = asFilter( filterFn );
-      final List<OmitRule> rules = new ArrayList<>();
+      final List<Rule> rules = new ArrayList<>();
       for ( final JarEntry entry : jarFile.stream().collect( Collectors.toList() ) )
       {
         if ( entry.getName().startsWith( BASE_PATH ) && filter.test( entry.getName() ) )
@@ -62,13 +62,13 @@ final class OmitRuleLoader
   }
 
   @Nonnull
-  static Collection<OmitRule> loadFromClassLoader( @Nonnull final ClassLoader classLoader,
-                                                   @Nullable final Predicate<String> filterFn )
+  static Collection<Rule> loadFromClassLoader( @Nonnull final ClassLoader classLoader,
+                                               @Nullable final Predicate<String> filterFn )
   {
     final List<String> resourceNames = new ArrayList<>();
     collectResourceNames( classLoader, BASE_PATH, asFilter( filterFn ), resourceNames );
 
-    final List<OmitRule> rules = new ArrayList<>();
+    final List<Rule> rules = new ArrayList<>();
     for ( final String resourceName : resourceNames )
     {
       try
@@ -120,10 +120,10 @@ final class OmitRuleLoader
   }
 
   @Nonnull
-  private static List<OmitRule> loadOmitRules( @Nonnull final InputStream inputStream )
+  private static List<Rule> loadOmitRules( @Nonnull final InputStream inputStream )
     throws IOException
   {
-    final List<OmitRule> rules = new ArrayList<>();
+    final List<Rule> rules = new ArrayList<>();
     try ( final JsonReader reader = Json.createReader( inputStream ) )
     {
       final JsonArray ruleArray = reader.readArray();
@@ -137,7 +137,7 @@ final class OmitRuleLoader
   }
 
   @Nonnull
-  private static OmitRule parseOmitRule( final int ruleIndex, @Nonnull final JsonObject ruleObject )
+  private static Rule parseOmitRule( final int ruleIndex, @Nonnull final JsonObject ruleObject )
     throws IOException
   {
     final String type = ruleObject.getString( "type" );
@@ -152,11 +152,11 @@ final class OmitRuleLoader
     }
     try
     {
-      return new OmitRule( Pattern.compile( type ),
-                           null == member ? null : Pattern.compile( member ),
-                           null == property ?
-                           null :
-                           new Condition( property, value, operator.equals( "EQ" ) ) );
+      return new Rule( Pattern.compile( type ),
+                       null == member ? null : Pattern.compile( member ),
+                       null == property ?
+                       null :
+                       new Condition( property, value, operator.equals( "EQ" ) ) );
     }
     catch ( final PatternSyntaxException pse )
     {

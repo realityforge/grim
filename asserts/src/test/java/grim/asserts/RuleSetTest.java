@@ -67,7 +67,7 @@ public class RuleSetTest
     final RuleSet rules = buildRuleSet();
     assertEquals( rules.getRules().size(), 1 );
 
-    final OmitRule rule = rules.getRules().iterator().next();
+    final Rule rule = rules.getRules().iterator().next();
     assertEquals( rule.getType().toString(), "^\\Qarez.ArezContext\\E$" );
     final Pattern member = rule.getMember();
     assertNotNull( member );
@@ -92,7 +92,7 @@ public class RuleSetTest
     final RuleSet rules = buildRuleSet();
     assertEquals( rules.getRules().size(), 1 );
 
-    final OmitRule rule = rules.getRules().iterator().next();
+    final Rule rule = rules.getRules().iterator().next();
     assertEquals( rule.getType().toString(), "^\\Qarez.ArezContext\\E$" );
     assertNull( rule.getMember() );
     final Condition condition = rule.getCondition();
@@ -188,7 +188,7 @@ public class RuleSetTest
     final RuleSet rules = buildRuleSetFromJar();
     assertEquals( rules.getRules().size(), 1 );
 
-    final OmitRule rule = rules.getRules().iterator().next();
+    final Rule rule = rules.getRules().iterator().next();
     assertEquals( rule.getType().toString(), "^\\Qarez.ArezContext\\E$" );
     assertNull( rule.getMember() );
     final Condition condition = rule.getCondition();

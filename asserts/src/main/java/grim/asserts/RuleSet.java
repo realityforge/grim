@@ -14,15 +14,15 @@ import javax.annotation.Nullable;
 public final class RuleSet
 {
   @Nonnull
-  private final Collection<OmitRule> _rules;
+  private final Collection<Rule> _rules;
 
-  private RuleSet( @Nonnull final Collection<OmitRule> rules )
+  private RuleSet( @Nonnull final Collection<Rule> rules )
   {
     _rules = Objects.requireNonNull( rules );
   }
 
   @Nonnull
-  public Collection<OmitRule> getRules()
+  public Collection<Rule> getRules()
   {
     return _rules;
   }

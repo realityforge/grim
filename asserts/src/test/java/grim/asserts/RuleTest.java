@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
-public class OmitRuleTest
+public class RuleTest
 {
   @Test
   public void basicOperation()
@@ -15,7 +15,7 @@ public class OmitRuleTest
     final Pattern memberPattern = Pattern.compile( "^\\QgetName\\E$" );
     final Condition condition = new Condition( "arez.enable_names", "true", false );
 
-    final OmitRule rule = new OmitRule( typePattern, memberPattern, condition );
+    final Rule rule = new Rule( typePattern, memberPattern, condition );
     assertEquals( rule.getType(), typePattern );
     assertEquals( rule.getMember(), memberPattern );
     assertEquals( rule.getCondition(), condition );
@@ -44,7 +44,7 @@ public class OmitRuleTest
     final Pattern typePattern = Pattern.compile( "^\\Qarez.ArezContext\\E$" );
     final Pattern memberPattern = Pattern.compile( "^\\QgetName\\E$" );
 
-    final OmitRule rule = new OmitRule( typePattern, memberPattern, null );
+    final Rule rule = new Rule( typePattern, memberPattern, null );
     assertEquals( rule.getType(), typePattern );
     assertEquals( rule.getMember(), memberPattern );
     assertNull( rule.getCondition() );
@@ -60,7 +60,7 @@ public class OmitRuleTest
   {
     final Pattern typePattern = Pattern.compile( "^\\Qarez.ArezContext\\E$" );
 
-    final OmitRule rule = new OmitRule( typePattern, null, null );
+    final Rule rule = new Rule( typePattern, null, null );
     assertEquals( rule.getType(), typePattern );
     assertNull( rule.getMember() );
     assertNull( rule.getCondition() );
@@ -77,7 +77,7 @@ public class OmitRuleTest
     final Pattern typePattern = Pattern.compile( "^\\Qarez.ArezContext\\E$" );
     final Condition condition = new Condition( "arez.enable_names", "true", false );
 
-    final OmitRule rule = new OmitRule( typePattern, null, condition );
+    final Rule rule = new Rule( typePattern, null, condition );
     assertEquals( rule.getType(), typePattern );
     assertNull( rule.getMember() );
     assertEquals( rule.getCondition(), condition );

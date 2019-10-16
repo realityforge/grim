@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 /**
  * Representation of a rule declaring symbols that should be omitted possible under a condition.
  */
-public final class OmitRule
+public final class Rule
 {
   /**
    * A regular expression to match the type.
@@ -27,7 +27,7 @@ public final class OmitRule
   @Nullable
   private final Condition _condition;
 
-  public OmitRule( @Nonnull final Pattern type, @Nullable final Pattern member, @Nullable final Condition condition )
+  public Rule( @Nonnull final Pattern type, @Nullable final Pattern member, @Nullable final Condition condition )
   {
     _type = Objects.requireNonNull( type );
     _member = member;
