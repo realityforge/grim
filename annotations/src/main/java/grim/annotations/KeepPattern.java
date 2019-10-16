@@ -15,7 +15,7 @@ public @interface KeepPattern
 {
   /**
    * A regular expression used to match types that may appear in generated javascript.
-   * If not specified then it will default to the package which is annotated with the annotation.
+   * If not specified then it will default to the package annotated by the annotation and all sub-packages.
    *
    * @return a regular expression used to match types that may appear in generated javascript.
    */

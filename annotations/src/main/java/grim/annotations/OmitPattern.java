@@ -15,7 +15,7 @@ public @interface OmitPattern
 {
   /**
    * A regular expression used to match types to omit.
-   * If not specified then it will default to the package which is annotated with the annotation.
+   * If not specified then it will default to the package annotated by the annotation and all sub-packages.
    *
    * @return a regular expression used to match types to omit.
    */
