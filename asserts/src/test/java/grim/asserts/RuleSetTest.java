@@ -41,7 +41,8 @@ public class RuleSetTest
     throws Exception
   {
     final RuleSet rules = buildRuleSet();
-    assertEquals( rules.getRules().size(), 0 );
+    assertEquals( rules.getOmitRules().size(), 0 );
+    assertEquals( rules.getKeepRules().size(), 0 );
   }
 
   @Test
@@ -65,9 +66,10 @@ public class RuleSetTest
                     "]\n" );
 
     final RuleSet rules = buildRuleSet();
-    assertEquals( rules.getRules().size(), 1 );
+    assertEquals( rules.getOmitRules().size(), 1 );
+    assertEquals( rules.getKeepRules().size(), 0 );
 
-    final Rule rule = rules.getRules().iterator().next();
+    final Rule rule = rules.getOmitRules().iterator().next();
     assertEquals( rule.getType().toString(), "^\\Qarez.ArezContext\\E$" );
     final Pattern member = rule.getMember();
     assertNotNull( member );
@@ -90,9 +92,10 @@ public class RuleSetTest
                     "]\n" );
 
     final RuleSet rules = buildRuleSet();
-    assertEquals( rules.getRules().size(), 1 );
+    assertEquals( rules.getOmitRules().size(), 1 );
+    assertEquals( rules.getKeepRules().size(), 0 );
 
-    final Rule rule = rules.getRules().iterator().next();
+    final Rule rule = rules.getOmitRules().iterator().next();
     assertEquals( rule.getType().toString(), "^\\Qarez.ArezContext\\E$" );
     assertNull( rule.getMember() );
     final Condition condition = rule.getCondition();
@@ -101,10 +104,63 @@ public class RuleSetTest
     assertEquals( condition.getValue(), "true" );
     assertFalse( condition.isEquals() );
 
-    assertTrue( rules.matches( new HashMap<>(), "arez.ArezContext", "Foo" ) );
+    assertTrue( rules.shouldOmitSymbol( new HashMap<>(), "arez.ArezContext", "Foo" ) );
     final Map<String, String> compileTimeProperties = new HashMap<>();
     compileTimeProperties.put( "galdr.enable_names", "true" );
-    assertFalse( rules.matches( compileTimeProperties, "arez.ArezContext", "Foo" ) );
+    assertFalse( rules.shouldOmitSymbol( compileTimeProperties, "arez.ArezContext", "Foo" ) );
+  }
+
+  @Test
+  public void ruleSet_includeKeepRules()
+    throws Exception
+  {
+    createRuleFile( "arez/ArezContext.grim.json",
+                    "[\n" +
+                    "  {\n" +
+                    "    \"type\": \"^\\\\Qarez.Node\\\\E$\"\n" +
+                    "  },\n" +
+                    "  {\n" +
+                    "    \"type\": \"^\\\\Qarez.Node\\\\E$\",\n" +
+                    "    \"member\": \"^\\\\Q_name\\\\E$\",\n" +
+                    "    \"keep\": true,\n" +
+                    "    \"property\": \"galdr.enable_names\",\n" +
+                    "    \"operator\": \"EQ\",\n" +
+                    "    \"value\": \"true\"\n" +
+                    "  }\n" +
+                    "]\n" );
+
+    final RuleSet rules = buildRuleSet();
+    assertEquals( rules.getOmitRules().size(), 1 );
+    assertEquals( rules.getKeepRules().size(), 1 );
+
+    final Rule omitRule = rules.getOmitRules().iterator().next();
+    assertEquals( omitRule.getType().toString(), "^\\Qarez.Node\\E$" );
+    assertTrue( omitRule.isOmitRule() );
+    assertNull( omitRule.getMember() );
+    assertNull( omitRule.getCondition() );
+
+    final Rule keepRule = rules.getKeepRules().iterator().next();
+    assertTrue( keepRule.isKeepRule() );
+    assertEquals( keepRule.getType().toString(), "^\\Qarez.Node\\E$" );
+    final Pattern member = keepRule.getMember();
+    assertNotNull( member );
+    assertEquals( member.toString(), "^\\Q_name\\E$" );
+    final Condition condition = keepRule.getCondition();
+    assertNotNull( condition );
+    assertEquals( condition.getProperty(), "galdr.enable_names" );
+    assertEquals( condition.getValue(), "true" );
+    assertTrue( condition.isEquals() );
+
+    assertTrue( rules.shouldOmitSymbol( new HashMap<>(), "arez.Node", "Foo" ) );
+    assertTrue( rules.shouldOmitSymbol( new HashMap<>(), "arez.Node", "_name" ) );
+    assertFalse( rules.shouldOmitSymbol( new HashMap<>(), "arez.Observer", "_name" ) );
+
+    final Map<String, String> compileTimeProperties = new HashMap<>();
+    compileTimeProperties.put( "galdr.enable_names", "true" );
+
+    assertTrue( rules.shouldOmitSymbol( compileTimeProperties, "arez.Node", "Foo" ) );
+    assertFalse( rules.shouldOmitSymbol( compileTimeProperties, "arez.Node", "_name" ) );
+    assertFalse( rules.shouldOmitSymbol( compileTimeProperties, "arez.Observer", "_name" ) );
   }
 
   @Test
@@ -126,10 +182,10 @@ public class RuleSetTest
                     "  }\n" +
                     "]\n" );
 
-    assertEquals( buildRuleSet().getRules().size(), 2 );
+    assertEquals( buildRuleSet().getOmitRules().size(), 2 );
     // This next one filters out the spy rules
     assertEquals( RuleSet.loadFromClassLoader( newClassLoader(), r -> !r.startsWith( "arez.spy." ) )
-                    .getRules()
+                    .getOmitRules()
                     .size(), 1 );
   }
 
@@ -186,9 +242,10 @@ public class RuleSetTest
                     "]\n" );
 
     final RuleSet rules = buildRuleSetFromJar();
-    assertEquals( rules.getRules().size(), 1 );
+    assertEquals( rules.getOmitRules().size(), 1 );
+    assertEquals( rules.getKeepRules().size(), 0 );
 
-    final Rule rule = rules.getRules().iterator().next();
+    final Rule rule = rules.getOmitRules().iterator().next();
     assertEquals( rule.getType().toString(), "^\\Qarez.ArezContext\\E$" );
     assertNull( rule.getMember() );
     final Condition condition = rule.getCondition();
@@ -197,10 +254,10 @@ public class RuleSetTest
     assertEquals( condition.getValue(), "true" );
     assertFalse( condition.isEquals() );
 
-    assertTrue( rules.matches( new HashMap<>(), "arez.ArezContext", "Foo" ) );
+    assertTrue( rules.shouldOmitSymbol( new HashMap<>(), "arez.ArezContext", "Foo" ) );
     final Map<String, String> compileTimeProperties = new HashMap<>();
     compileTimeProperties.put( "galdr.enable_names", "true" );
-    assertFalse( rules.matches( compileTimeProperties, "arez.ArezContext", "Foo" ) );
+    assertFalse( rules.shouldOmitSymbol( compileTimeProperties, "arez.ArezContext", "Foo" ) );
   }
 
   @Nonnull

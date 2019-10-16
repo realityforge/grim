@@ -3,8 +3,8 @@ package grim.asserts;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -13,18 +13,33 @@ import javax.annotation.Nullable;
  */
 public final class RuleSet
 {
+  /**
+   * Rules for symbols to omit.
+   */
   @Nonnull
-  private final Collection<Rule> _rules;
+  private final Collection<Rule> _omitRules;
+  /**
+   * Rules for symbols to keep.
+   */
+  @Nonnull
+  private final Collection<Rule> _keepRules;
 
-  private RuleSet( @Nonnull final Collection<Rule> rules )
+  private RuleSet( @Nonnull final Collection<Rule> omitRules )
   {
-    _rules = Objects.requireNonNull( rules );
+    _omitRules = omitRules.stream().filter( Rule::isOmitRule ).collect( Collectors.toList() );
+    _keepRules = omitRules.stream().filter( Rule::isKeepRule ).collect( Collectors.toList() );
   }
 
   @Nonnull
-  public Collection<Rule> getRules()
+  Collection<Rule> getOmitRules()
   {
-    return _rules;
+    return _omitRules;
+  }
+
+  @Nonnull
+  Collection<Rule> getKeepRules()
+  {
+    return _keepRules;
   }
 
   /**
@@ -96,10 +111,11 @@ public final class RuleSet
    * @param member                the name of the member if any else the empty string.
    * @return true if the symbol should be omitted.
    */
-  public boolean matches( @Nonnull final Map<String, String> compileTimeProperties,
-                          @Nonnull final String type,
-                          @Nonnull final String member )
+  public boolean shouldOmitSymbol( @Nonnull final Map<String, String> compileTimeProperties,
+                                   @Nonnull final String type,
+                                   @Nonnull final String member )
   {
-    return _rules.stream().anyMatch( r -> r.matches( compileTimeProperties, type, member ) );
+    return _omitRules.stream().anyMatch( r1 -> r1.matches( compileTimeProperties, type, member ) ) &&
+           _keepRules.stream().noneMatch( r -> r.matches( compileTimeProperties, type, member ) );
   }
 }
