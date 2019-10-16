@@ -2,6 +2,8 @@
 
 ### Unreleased
 
+* Fixed a bug that caused a build failure if both a `@KeepPattern` and an `@OmitPattern` occurred on the same package. 
+
 ### [v0.02](https://github.com/realityforge/grim/tree/v0.02) (2019-10-16) · [Full Changelog](https://github.com/realityforge/grim/compare/v0.01...v0.02)
 
 * Fixed a bug where the `@OmitSymbol` annotation on methods that are devirtualized by the GWT compiler were not being matched. The devirtualization process creates a new method using the name of the old method prefixed with the `$` character. Update the annotation processor to follow this convention.

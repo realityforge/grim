@@ -26,5 +26,21 @@
     "property": "arez.enable_names",
     "operator": "NEQ",
     "value": "true"
+  },
+  {
+    "keep": true,
+    "type": "^arez\\.ArezContextHolder$",
+    "member": "^\\$clinit$",
+    "property": "arez.enable_zones",
+    "operator": "NEQ",
+    "value": "true"
+  },
+  {
+    "keep": true,
+    "type": "^arez\\.ArezZoneHolder$",
+    "member": "^\\$clinit$",
+    "property": "arez.enable_zones",
+    "operator": "EQ",
+    "value": "true"
   }
 ]

@@ -70,7 +70,7 @@ public final class GrimProcessor
   @Override
   public boolean process( @Nonnull final Set<? extends TypeElement> annotations, @Nonnull final RoundEnvironment env )
   {
-    final List<PackageElement> packagesToProcess = new ArrayList<>();
+    final Set<PackageElement> packagesToProcess = new HashSet<>();
     final Map<String, TypeElement> typesToProcess = new HashMap<>();
     for ( final TypeElement annotation : annotations )
     {
