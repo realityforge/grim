@@ -7,7 +7,6 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation indicating symbols matching pattern should be omitted from generated javascript.
- * This annotation is applied to the class type and applies to all nested members.
  */
 @Documented
 @Repeatable( OmitPatterns.class )
