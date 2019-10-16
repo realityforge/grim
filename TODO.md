@@ -12,6 +12,12 @@ complete as there is too much un-said.
   `@OmitPattern(pattern="^\\$clinit$")` but add a `@KeepClinit` on the few classes where clinits are valid.
   This makes it much easier in projects like Arez where we can very precisely control where it is valid to
   retain java code elements.
+  i.e.
+  - Allow `type=".*\\.React4j_[^\\.]+\\$Factory", member="^\\$clinit$"` but disallow all other `$clinit` in `React_*` generated classes.
+  - Allow `type="arez.ArezContextHolder", member="$clinit"` if zones disabled
+  - Allow `type="arez.ZoneHolder", member="$clinit"` if zones enabled
+  - Disallow `type="arez.*", member="$clinit"`
+
 
 * Apply ruleset to output using gwt-symbolmap
 
