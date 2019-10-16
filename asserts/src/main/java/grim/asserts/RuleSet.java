@@ -24,10 +24,10 @@ public final class RuleSet
   @Nonnull
   private final Collection<Rule> _keepRules;
 
-  private RuleSet( @Nonnull final Collection<Rule> omitRules )
+  private RuleSet( @Nonnull final Collection<Rule> rules )
   {
-    _omitRules = omitRules.stream().filter( Rule::isOmitRule ).collect( Collectors.toList() );
-    _keepRules = omitRules.stream().filter( Rule::isKeepRule ).collect( Collectors.toList() );
+    _omitRules = rules.stream().filter( Rule::isOmitRule ).collect( Collectors.toList() );
+    _keepRules = rules.stream().filter( Rule::isKeepRule ).collect( Collectors.toList() );
   }
 
   @Nonnull
