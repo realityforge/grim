@@ -48,7 +48,7 @@ define 'grim' do
     pom.include_transitive_dependencies << artifact(:javax_json)
     pom.dependency_filter = Proc.new {|dep| dep[:scope].to_s != 'test' && dep[:group].to_s != 'com.google.auto'}
 
-    compile.with :autocommon,
+    compile.with :proton_core,
                  :javax_json,
                  :javax_annotation
 
@@ -68,8 +68,7 @@ define 'grim' do
     package(:javadoc)
 
     package(:jar).enhance do |jar|
-      jar.merge(artifact(:guava))
-      jar.merge(artifact(:autocommon))
+      jar.merge(artifact(:proton_core))
       jar.enhance do |f|
         shaded_jar = (f.to_s + '-shaded')
         Buildr.ant 'shade_jar' do |ant|

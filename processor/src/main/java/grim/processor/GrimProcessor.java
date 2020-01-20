@@ -1,43 +1,29 @@
 package grim.processor;
 
-import com.google.auto.common.SuperficialValidation;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
-import javax.json.Json;
 import javax.json.stream.JsonGenerator;
-import javax.json.stream.JsonGeneratorFactory;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.tools.FileObject;
-import javax.tools.StandardLocation;
+import org.realityforge.proton.AbstractStandardProcessor;
+import org.realityforge.proton.AnnotationsUtil;
+import org.realityforge.proton.JsonUtil;
 import static javax.tools.Diagnostic.Kind.*;
 
 /**
@@ -48,7 +34,7 @@ import static javax.tools.Diagnostic.Kind.*;
 @SupportedAnnotationTypes( { "grim.annotations.*" } )
 @SupportedSourceVersion( SourceVersion.RELEASE_8 )
 public final class GrimProcessor
-  extends AbstractProcessor
+  extends AbstractStandardProcessor
 {
   @Nonnull
   private static final String BASE_RESOURCE_PATH = "META-INF/grim/";
@@ -57,15 +43,19 @@ public final class GrimProcessor
   @Nonnull
   private static final String SENTINEL = "<default>";
 
-  @FunctionalInterface
-  private interface Action
+  @Nonnull
+  @Override
+  protected String getIssueTrackerURL()
   {
-    void call()
-      throws Exception;
+    return "https://github.com/realityforge/grim/issues";
   }
 
   @Nonnull
-  private HashSet<TypeElement> _deferred = new HashSet<>();
+  @Override
+  protected String getOptionPrefix()
+  {
+    return "grim";
+  }
 
   @Override
   public boolean process( @Nonnull final Set<? extends TypeElement> annotations, @Nonnull final RoundEnvironment env )
@@ -114,112 +104,40 @@ public final class GrimProcessor
         }
       }
     }
-    processPackages( packagesToProcess );
-    processTypeElements( getElementsToProcess( typesToProcess.values() ) );
-    if ( env.getRootElements().isEmpty() && !_deferred.isEmpty() )
-    {
-      _deferred.forEach( this::processingErrorMessage );
-      _deferred.clear();
-    }
+    processPackages( env, packagesToProcess );
+    processTypeElements( env, typesToProcess.values(), this::processTypeElement );
+    errorIfProcessingOverAndInvalidTypesDetected( env );
     return true;
   }
 
-  private void processPackages( @Nonnull final Collection<PackageElement> elements )
+  private void processPackages( @Nonnull final RoundEnvironment env,
+                                @Nonnull final Collection<PackageElement> elements )
   {
     for ( final PackageElement element : elements )
     {
-      processAction( element, () -> process( element ) );
+      performAction( env, this::processPackageElement, element );
     }
   }
 
-  private void process( @Nonnull final PackageElement element )
+  private void processPackageElement( @Nonnull final PackageElement element )
     throws IOException
   {
-    writeJsonResource( element, toGrimJsonFilename( element ), g -> processPatterns( element, g ) );
+    JsonUtil.writeJsonResource( processingEnv, element, toJsonFilename( element ), g -> emitPatterns( element, g ) );
   }
 
-  private void processTypeElements( @Nonnull final Collection<TypeElement> elements )
-  {
-    for ( final TypeElement element : elements )
-    {
-      processAction( element, () -> process( element ) );
-    }
-  }
-
-  private void processAction( @Nonnull final Element element, @Nonnull final Action action )
-  {
-    try
-    {
-      action.call();
-    }
-    catch ( final IOException ioe )
-    {
-      processingEnv.getMessager().printMessage( ERROR, ioe.getMessage(), element );
-    }
-    catch ( final Throwable e )
-    {
-      final StringWriter sw = new StringWriter();
-      e.printStackTrace( new PrintWriter( sw ) );
-      sw.flush();
-
-      final String message =
-        "Unexpected error will running the " + getClass().getName() + " processor. This has " +
-        "resulted in a failure to process the code and has left the compiler in an invalid " +
-        "state. Please report the failure to the developers so that it can be fixed.\n" +
-        " Report the error at: https://github.com/realityforge/grim/issues\n" +
-        "\n\n" +
-        sw.toString();
-      processingEnv.getMessager().printMessage( ERROR, message, element );
-    }
-  }
-
-  private void process( @Nonnull final TypeElement element )
+  private void processTypeElement( @Nonnull final TypeElement element )
     throws IOException
   {
-    writeJsonResource( element, toGrimJsonFilename( element ), g -> {
-      processClinits( element, g );
-      processTypes( element, g );
-      processSymbols( element, g );
-    } );
+    JsonUtil.writeJsonResource( processingEnv, element, toJsonFilename( element ), g -> emitPatterns( element, g ) );
   }
 
-  private void writeJsonResource( @Nonnull final Element element,
-                                  @Nonnull final String filename,
-                                  @Nonnull final Consumer<JsonGenerator> action )
-    throws IOException
+  private void emitPatterns( @Nonnull final TypeElement element, @Nonnull final JsonGenerator g )
   {
-    final Map<String, Object> properties = new HashMap<>();
-    properties.put( JsonGenerator.PRETTY_PRINTING, true );
-    final JsonGeneratorFactory generatorFactory = Json.createGeneratorFactory( properties );
-
-    final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    final JsonGenerator g = generatorFactory.createGenerator( baos );
     g.writeStartArray();
-
-    action.accept( g );
-
+    processClinits( element, g );
+    processTypes( element, g );
+    processSymbols( element, g );
     g.writeEnd();
-    g.close();
-
-    writeResource( filename, formatJson( baos.toString() ), element );
-  }
-
-  private void writeResource( @Nonnull final String filename,
-                              @Nonnull final String content,
-                              @Nonnull final Element element )
-    throws IOException
-  {
-    final FileObject resource =
-      processingEnv.getFiler().createResource( StandardLocation.CLASS_OUTPUT, "", filename, element );
-    try ( final OutputStream outputStream = resource.openOutputStream() )
-    {
-      outputStream.write( content.getBytes( StandardCharsets.UTF_8 ) );
-    }
-    catch ( final IOException e )
-    {
-      resource.delete();
-      throw e;
-    }
   }
 
   private void processClinits( @Nonnull final TypeElement element, @Nonnull final JsonGenerator g )
@@ -232,7 +150,7 @@ public final class GrimProcessor
                               @Nonnull final String annotationName,
                               @Nonnull final JsonGenerator g )
   {
-    final AnnotationMirror annotation = findAnnotationByType( element, annotationName );
+    final AnnotationMirror annotation = AnnotationsUtil.findAnnotationByType( element, annotationName );
     if ( null != annotation )
     {
       g.writeStartObject();
@@ -257,7 +175,9 @@ public final class GrimProcessor
                                        @Nonnull final String annotationName,
                                        @Nonnull final JsonGenerator g )
   {
-    for ( final AnnotationMirror annotation : getRepeatingAnnotations( element, containerAnnotation, annotationName ) )
+    for ( final AnnotationMirror annotation : AnnotationsUtil.getRepeatingAnnotations( element,
+                                                                                       containerAnnotation,
+                                                                                       annotationName ) )
     {
       g.writeStartObject();
       if ( Constants.KEEP_TYPE_CLASSNAME.equals( annotationName ) )
@@ -270,10 +190,12 @@ public final class GrimProcessor
     }
   }
 
-  private void processPatterns( @Nonnull final PackageElement element, @Nonnull final JsonGenerator g )
+  private void emitPatterns( @Nonnull final PackageElement element, @Nonnull final JsonGenerator g )
   {
+    g.writeStartArray();
     processPatternAnnotations( element, Constants.OMIT_PATTERNS_CLASSNAME, Constants.OMIT_PATTERN_CLASSNAME, g );
     processPatternAnnotations( element, Constants.KEEP_PATTERNS_CLASSNAME, Constants.KEEP_PATTERN_CLASSNAME, g );
+    g.writeEnd();
   }
 
   private void processPatternAnnotations( @Nonnull final PackageElement element,
@@ -281,22 +203,23 @@ public final class GrimProcessor
                                           @Nonnull final String annotationName,
                                           @Nonnull final JsonGenerator g )
   {
-    for ( final AnnotationMirror annotation : getRepeatingAnnotations( element, containerAnnotation, annotationName ) )
+    final List<AnnotationMirror> annotations =
+      AnnotationsUtil.getRepeatingAnnotations( element, containerAnnotation, annotationName );
+    for ( final AnnotationMirror annotation : annotations )
     {
       g.writeStartObject();
       if ( Constants.KEEP_PATTERN_CLASSNAME.equals( annotationName ) )
       {
         g.write( "keep", true );
       }
-      final String typePattern =
-        (String) getAnnotationValue( annotation, "type" ).getValue();
+      final String typePattern = AnnotationsUtil.getAnnotationValue( annotation, "type" );
       final String actualTypePattern =
         SENTINEL.equals( typePattern ) ?
         "^" + element.getQualifiedName().toString().replace( ".", "\\." ) + "\\..*$" :
         typePattern;
       g.write( "type", actualTypePattern );
 
-      final String symbolPattern = (String) getAnnotationValue( annotation, "symbol" ).getValue();
+      final String symbolPattern = AnnotationsUtil.getAnnotationValue( annotation, "symbol" );
       if ( !SENTINEL.equals( symbolPattern ) )
       {
         g.write( "member", symbolPattern );
@@ -339,7 +262,9 @@ public final class GrimProcessor
                                          @Nonnull final String annotationName,
                                          @Nonnull final JsonGenerator g )
   {
-    for ( final AnnotationMirror annotation : getRepeatingAnnotations( element, containerAnnotation, annotationName ) )
+    final List<AnnotationMirror> annotations =
+      AnnotationsUtil.getRepeatingAnnotations( element, containerAnnotation, annotationName );
+    for ( final AnnotationMirror annotation : annotations )
     {
       g.writeStartObject();
       if ( Constants.KEEP_SYMBOL_CLASSNAME.equals( annotationName ) )
@@ -376,8 +301,8 @@ public final class GrimProcessor
                                   @Nonnull final String annotationName,
                                   @Nonnull final JsonGenerator g )
   {
-    final String when = (String) getAnnotationValue( annotation, "when" ).getValue();
-    final String unless = (String) getAnnotationValue( annotation, "unless" ).getValue();
+    final String when = AnnotationsUtil.getAnnotationValue( annotation, "when" );
+    final String unless = AnnotationsUtil.getAnnotationValue( annotation, "unless" );
     if ( !"".equals( when ) && !"".equals( unless ) )
     {
       processingEnv.getMessager()
@@ -412,13 +337,13 @@ public final class GrimProcessor
   }
 
   @Nonnull
-  private String toGrimJsonFilename( @Nonnull final PackageElement element )
+  private String toJsonFilename( @Nonnull final PackageElement element )
   {
     return BASE_RESOURCE_PATH + packageFilename( element ) + "package-info" + SUFFIX;
   }
 
   @Nonnull
-  private String toGrimJsonFilename( @Nonnull final TypeElement element )
+  private String toJsonFilename( @Nonnull final TypeElement element )
   {
     return BASE_RESOURCE_PATH + typeName( element ) + SUFFIX;
   }
@@ -458,137 +383,5 @@ public final class GrimProcessor
     // A very common transform in the GWT compiler is to de-virtualize a method. In which case the original method
     // is removed and a new one is created with the $ prefix. So for methods we try to handle this scenario.
     return "^\\$?" + Pattern.quote( string ) + "$";
-  }
-
-  private void processingErrorMessage( @Nonnull final TypeElement target )
-  {
-    processingEnv.getMessager().printMessage( ERROR,
-                                              "GrimProcessor unable to process " + target.getQualifiedName() +
-                                              " because not all of its dependencies could be resolved. Check for " +
-                                              "compilation errors or a circular dependency with generated code.",
-                                              target );
-  }
-
-  @Nonnull
-  private Collection<TypeElement> getElementsToProcess( @Nonnull final Collection<TypeElement> elements )
-  {
-    final List<TypeElement> deferred = _deferred
-      .stream()
-      .map( e -> processingEnv.getElementUtils().getTypeElement( e.getQualifiedName() ) )
-      .collect( Collectors.toList() );
-    _deferred = new HashSet<>();
-
-    final ArrayList<TypeElement> elementsToProcess = new ArrayList<>();
-    collectElementsToProcess( elements, elementsToProcess );
-    collectElementsToProcess( deferred, elementsToProcess );
-    return elementsToProcess;
-  }
-
-  private void collectElementsToProcess( @Nonnull final Collection<TypeElement> elements,
-                                         @Nonnull final List<TypeElement> elementsToProcess )
-  {
-    for ( final TypeElement element : elements )
-    {
-      if ( SuperficialValidation.validateElement( element ) )
-      {
-        elementsToProcess.add( element );
-      }
-      else
-      {
-        _deferred.add( element );
-      }
-    }
-  }
-
-  /**
-   * Format the json file.
-   * This is horribly inefficient but it is not called very often or with big files so ... meh.
-   */
-  @Nonnull
-  private String formatJson( @Nonnull final String input )
-  {
-    return
-      input
-        .replaceAll( "(?m)^ {4}\\{", "  {" )
-        .replaceAll( "(?m)^ {4}}", "  }" )
-        .replaceAll( "(?m)^ {8}\"", "    \"" )
-        .replaceAll( "(?m)^ {8}]", "    ]" )
-        .replaceAll( "(?m)^ {12}\\{", "      {" )
-        .replaceAll( "(?m)^ {12}}", "      }" )
-        .replaceAll( "(?m)^ {16}\"", "        \"" )
-        .replaceAll( "(?m)^\n\\[\n", "[\n" ) +
-      "\n";
-  }
-
-  @SuppressWarnings( "unchecked" )
-  @Nonnull
-  private List<AnnotationMirror> getRepeatingAnnotations( @Nonnull final Element typeElement,
-                                                          @Nonnull final String containerClassName,
-                                                          @Nonnull final String annotationClassName )
-  {
-    final AnnotationValue annotationValue =
-      findAnnotationValue( typeElement, containerClassName, "value" );
-    if ( null != annotationValue )
-    {
-      return ( (List<AnnotationValue>) annotationValue.getValue() ).stream().
-        map( v -> (AnnotationMirror) v.getValue() ).collect( Collectors.toList() );
-    }
-    else
-    {
-      final AnnotationMirror annotation = findAnnotationByType( typeElement, annotationClassName );
-      if ( null != annotation )
-      {
-        return Collections.singletonList( annotation );
-      }
-      else
-      {
-        return Collections.emptyList();
-      }
-    }
-  }
-
-  @SuppressWarnings( "SameParameterValue" )
-  @Nullable
-  private AnnotationValue findAnnotationValue( @Nonnull final Element typeElement,
-                                               @Nonnull final String annotationClassName,
-                                               @Nonnull final String parameterName )
-  {
-    final AnnotationMirror mirror = findAnnotationByType( typeElement, annotationClassName );
-    if ( null != mirror )
-    {
-      return findAnnotationValue( mirror, parameterName );
-    }
-    else
-    {
-      return null;
-    }
-  }
-
-  @Nullable
-  private AnnotationValue findAnnotationValue( @Nonnull final AnnotationMirror annotation,
-                                               @Nonnull final String parameterName )
-  {
-    final Map<? extends ExecutableElement, ? extends AnnotationValue> values =
-      processingEnv.getElementUtils().getElementValuesWithDefaults( annotation );
-    final ExecutableElement annotationKey = values.keySet().stream().
-      filter( k -> parameterName.equals( k.getSimpleName().toString() ) ).findFirst().orElse( null );
-    return values.get( annotationKey );
-  }
-
-  @Nonnull
-  private AnnotationValue getAnnotationValue( @Nonnull final AnnotationMirror annotation,
-                                              @Nonnull final String parameterName )
-  {
-    final AnnotationValue value = findAnnotationValue( annotation, parameterName );
-    assert null != value;
-    return value;
-  }
-
-  @Nullable
-  private AnnotationMirror findAnnotationByType( @Nonnull final Element typeElement,
-                                                 @Nonnull final String annotationClassName )
-  {
-    return typeElement.getAnnotationMirrors().stream().
-      filter( a -> a.getAnnotationType().toString().equals( annotationClassName ) ).findFirst().orElse( null );
   }
 }
