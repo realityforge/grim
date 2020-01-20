@@ -55,6 +55,7 @@ define 'grim' do
     test.using :testng
     test.with :compile_testing,
               Java.tools_jar,
+              :proton_qa,
               :guava,
               :guava_failureaccess,
               :truth,

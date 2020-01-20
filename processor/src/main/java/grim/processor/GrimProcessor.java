@@ -39,9 +39,9 @@ public final class GrimProcessor
   extends AbstractStandardProcessor
 {
   @Nonnull
-  private static final String BASE_RESOURCE_PATH = "META-INF/grim/";
+  static final String BASE_RESOURCE_PATH = "META-INF/grim";
   @Nonnull
-  private static final String SUFFIX = ".grim.json";
+  static final String SUFFIX = ".grim.json";
   @Nonnull
   private static final String SENTINEL = "<default>";
 
@@ -341,13 +341,13 @@ public final class GrimProcessor
   @Nonnull
   private String toJsonFilename( @Nonnull final PackageElement element )
   {
-    return BASE_RESOURCE_PATH + packageFilename( element ) + "package-info" + SUFFIX;
+    return BASE_RESOURCE_PATH + "/" + packageFilename( element ) + "package-info" + SUFFIX;
   }
 
   @Nonnull
   private String toJsonFilename( @Nonnull final TypeElement element )
   {
-    return BASE_RESOURCE_PATH + typeName( element ) + SUFFIX;
+    return BASE_RESOURCE_PATH + "/" + typeName( element ) + SUFFIX;
   }
 
   @Nonnull

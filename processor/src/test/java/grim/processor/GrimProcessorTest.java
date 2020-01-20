@@ -2,11 +2,13 @@ package grim.processor;
 
 import java.util.Collections;
 import javax.annotation.Nonnull;
+import javax.annotation.processing.Processor;
+import org.realityforge.proton.qa.AbstractProcessorTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 public class GrimProcessorTest
-  extends AbstractGrimProcessorTest
+  extends AbstractProcessorTest
 {
   @DataProvider( name = "successfulCompiles" )
   public Object[][] successfulCompiles()
@@ -32,16 +34,32 @@ public class GrimProcessorTest
   public void processSuccessfulCompile( @Nonnull final String classname )
     throws Exception
   {
-    assertGrimRulesGenerated( classname );
+    final String output =
+      toFilename( "expected/" + GrimProcessor.BASE_RESOURCE_PATH, classname, "", GrimProcessor.SUFFIX );
+    assertSuccessfulCompile( inputs( classname ), Collections.singletonList( output ) );
   }
 
   @Test
   public void processSuccessfulCompileOnNestedClass()
     throws Exception
   {
-    final String inputFilename = "input/com/example/OmitOnNestedClassExample.java";
+    final String classname = "com.example.OmitOnNestedClassExample";
     final String outputFilename = "expected/META-INF/grim/com/example/OmitOnNestedClassExample$Foo.grim.json";
-    assertGrimRulesGenerated( Collections.singletonList( fixture( inputFilename ) ),
-                              Collections.singletonList( outputFilename ) );
+    assertSuccessfulCompile( inputs( classname ),
+                             Collections.singletonList( outputFilename ) );
+  }
+
+  @Nonnull
+  @Override
+  protected Processor processor()
+  {
+    return new GrimProcessor();
+  }
+
+  @Nonnull
+  @Override
+  protected String getOptionPrefix()
+  {
+    return "grim";
   }
 }
