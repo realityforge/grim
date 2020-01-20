@@ -56,6 +56,7 @@ define 'grim' do
     test.with :compile_testing,
               Java.tools_jar,
               :guava,
+              :guava_failureaccess,
               :truth,
               :junit,
               :hamcrest_core,

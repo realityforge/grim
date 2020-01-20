@@ -24,5 +24,6 @@ artifacts:
   junit: junit:junit:jar:4.12
   hamcrest_core: org.hamcrest:hamcrest-core:jar:1.3
   guava: com.google.guava:guava:jar:27.1-jre
+  guava_failureaccess: com.google.guava:failureaccess:jar:1.0.1
 
   javax_json: org.glassfish:javax.json:jar:1.1
