@@ -2,6 +2,7 @@
 
 ### Unreleased
 
+* Upgrade the `com.google.testing.compile` artifact to version `0.18`.
 * Update the documentation of the `type` parameter in the `@OmitPattern` and `@KeepPattern` annotations to reflect the actual implementation. If unspecified then the rule applies to the annotated package and all-subpackages.
 
 ### [v0.03](https://github.com/realityforge/grim/tree/v0.03) (2019-10-16) · [Full Changelog](https://github.com/realityforge/grim/compare/v0.02...v0.03)
