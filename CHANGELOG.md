@@ -1,6 +1,6 @@
 # Change Log
 
-### Unreleased
+### [v0.04](https://github.com/realityforge/grim/tree/v0.04) (2020-01-21) · [Full Changelog](https://github.com/realityforge/grim/compare/v0.03...v0.04)
 
 * Upgrade the `com.google.guava` artifact to version `27.1-jre`.
 * Upgrade the `com.google.truth` artifact to version `0.44`.
