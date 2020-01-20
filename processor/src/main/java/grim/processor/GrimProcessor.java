@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.SupportedOptions;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.json.stream.JsonGenerator;
 import javax.lang.model.SourceVersion;
@@ -33,6 +34,7 @@ import static javax.tools.Diagnostic.Kind.*;
 @SuppressWarnings( "Duplicates" )
 @SupportedAnnotationTypes( { "grim.annotations.*" } )
 @SupportedSourceVersion( SourceVersion.RELEASE_8 )
+@SupportedOptions( { "grim.defer.unresolved", "grim.defer.errors" } )
 public final class GrimProcessor
   extends AbstractStandardProcessor
 {
