@@ -45,8 +45,7 @@ public class GrimProcessorTest
   {
     final String classname = "com.example.OmitOnNestedClassExample";
     final String outputFilename = "expected/META-INF/grim/com/example/OmitOnNestedClassExample$Foo.grim.json";
-    assertSuccessfulCompile( inputs( classname ),
-                             Collections.singletonList( outputFilename ) );
+    assertSuccessfulCompile( inputs( classname ), Collections.singletonList( outputFilename ) );
   }
 
   @Nonnull
