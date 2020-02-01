@@ -2,6 +2,7 @@
 
 ### Unreleased
 
+* Upgrade the `com.google.testing.compile` artifact to version `0.18-rf`.
 * Upgrade the `org.realityforge.proton` artifacts to version `0.30`.
 
 ### [v0.04](https://github.com/realityforge/grim/tree/v0.04) (2020-01-21) · [Full Changelog](https://github.com/realityforge/grim/compare/v0.03...v0.04)
