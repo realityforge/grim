@@ -107,9 +107,17 @@ public final class GrimProcessor
       }
     }
     processPackages( env, packagesToProcess );
-    processTypeElements( env, typesToProcess.values(), this::processTypeElement );
+    processTypes( env, typesToProcess.values() );
     errorIfProcessingOverAndInvalidTypesDetected( env );
     return true;
+  }
+
+  private void processTypes( @Nonnull final RoundEnvironment env, @Nonnull final Collection<TypeElement> elements )
+  {
+    for ( final TypeElement element : elements )
+    {
+      performAction( env, this::processTypeElement, element );
+    }
   }
 
   private void processPackages( @Nonnull final RoundEnvironment env,
@@ -214,14 +222,14 @@ public final class GrimProcessor
       {
         g.write( "keep", true );
       }
-      final String typePattern = AnnotationsUtil.getAnnotationValue( annotation, "type" );
+      final String typePattern = AnnotationsUtil.getAnnotationValueValue( annotation, "type" );
       final String actualTypePattern =
         SENTINEL.equals( typePattern ) ?
         "^" + element.getQualifiedName().toString().replace( ".", "\\." ) + "\\..*$" :
         typePattern;
       g.write( "type", actualTypePattern );
 
-      final String symbolPattern = AnnotationsUtil.getAnnotationValue( annotation, "symbol" );
+      final String symbolPattern = AnnotationsUtil.getAnnotationValueValue( annotation, "symbol" );
       if ( !SENTINEL.equals( symbolPattern ) )
       {
         g.write( "member", symbolPattern );
@@ -303,8 +311,8 @@ public final class GrimProcessor
                                   @Nonnull final String annotationName,
                                   @Nonnull final JsonGenerator g )
   {
-    final String when = AnnotationsUtil.getAnnotationValue( annotation, "when" );
-    final String unless = AnnotationsUtil.getAnnotationValue( annotation, "unless" );
+    final String when = AnnotationsUtil.getAnnotationValueValue( annotation, "when" );
+    final String unless = AnnotationsUtil.getAnnotationValueValue( annotation, "unless" );
     if ( !"".equals( when ) && !"".equals( unless ) )
     {
       processingEnv.getMessager()
