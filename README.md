@@ -1,6 +1,6 @@
 # Grim: Ensure dead code is eliminated
 
-[![Build Status](https://secure.travis-ci.org/realityforge/grim.svg?branch=master)](http://travis-ci.org/realityforge/grim)
+[![Build Status](https://api.travis-ci.com/realityforge/grim.svg?branch=master)](http://travis-ci.org/realityforge/grim)
 [<img src="https://img.shields.io/maven-central/v/org.realityforge.grim/grim.svg?label=latest%20release"/>](https://search.maven.org/search?q=g:org.realityforge.grim%20a:grim)
 [![codecov](https://codecov.io/gh/realityforge/grim/branch/master/graph/badge.svg)](https://codecov.io/gh/realityforge/grim)
 
