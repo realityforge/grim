@@ -8,8 +8,8 @@ artifacts:
   idea_codestyle: au.com.stocksoftware.idea.codestyle:idea-codestyle:xml:1.14
 
   # GWT deps
-  gwt_user: org.realityforge.com.google.gwt:gwt-user:jar:2.8.2-v20191108
-  gwt_dev: org.realityforge.com.google.gwt:gwt-dev:jar:2.8.2-v20191108
+  gwt_user: com.google.gwt:gwt-user:jar:2.9.0
+  gwt_dev: com.google.gwt:gwt-dev:jar:2.9.0
 
   shade_task: org.realityforge.ant.shade:ant-shade-task:jar:0.1
 
