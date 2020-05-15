@@ -19,7 +19,13 @@ define 'grim' do
 
   desc 'The annotations'
   define 'annotations' do
-    gwt_enhance(project, :extra_deps => [:javax_annotation])
+    deps = artifacts(:javax_annotation)
+    pom.include_transitive_dependencies << deps
+    pom.dependency_filter = Proc.new {|dep| dep[:scope].to_s != 'test' && deps.include?(dep[:artifact])}
+
+    compile.with deps
+
+    gwt_enhance(project)
 
     package(:jar)
     package(:sources)
@@ -28,12 +34,11 @@ define 'grim' do
 
   desc 'The assertion library'
   define 'asserts' do
-    pom.include_transitive_dependencies << artifact(:javax_annotation)
-    pom.include_transitive_dependencies << artifact(:javax_json)
-    pom.dependency_filter = Proc.new {|dep| dep[:scope].to_s != 'test'}
+    deps = artifacts(:javax_annotation, :javax_json)
+    pom.include_transitive_dependencies << deps
+    pom.dependency_filter = Proc.new {|dep| dep[:scope].to_s != 'test' && deps.include?(dep[:artifact])}
 
-    compile.with :javax_annotation,
-                 :javax_json
+    compile.with deps
 
     test.using :testng
 
@@ -44,13 +49,12 @@ define 'grim' do
 
   desc 'The Annotation processor'
   define 'processor' do
-    pom.include_transitive_dependencies << artifact(:javax_annotation)
-    pom.include_transitive_dependencies << artifact(:javax_json)
-    pom.dependency_filter = Proc.new {|dep| dep[:scope].to_s != 'test' && dep[:group].to_s != 'com.google.auto'}
+    deps = artifacts(:javax_annotation, :javax_json)
+    pom.include_transitive_dependencies << deps
+    pom.dependency_filter = Proc.new {|dep| dep[:scope].to_s != 'test' && deps.include?(dep[:artifact])}
 
     compile.with :proton_core,
-                 :javax_json,
-                 :javax_annotation
+                 deps
 
     test.using :testng
     test.with :compile_testing,
