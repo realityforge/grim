@@ -1,7 +1,7 @@
 # Grim: Ensure dead code is eliminated
 
 [![Build Status](https://api.travis-ci.com/realityforge/grim.svg?branch=master)](http://travis-ci.com/realityforge/grim)
-[<img src="https://img.shields.io/maven-central/v/org.realityforge.grim/grim.svg?label=latest%20release"/>](https://search.maven.org/search?q=g:org.realityforge.grim%20a:grim-annotations)
+[<img src="https://img.shields.io/maven-central/v/org.realityforge.grim/grim-annotations.svg?label=latest%20release"/>](https://search.maven.org/search?q=g:org.realityforge.grim%20a:grim-annotations)
 [![codecov](https://codecov.io/gh/realityforge/grim/branch/master/graph/badge.svg)](https://codecov.io/gh/realityforge/grim)
 
 ## What is Grim?
