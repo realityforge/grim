@@ -2,6 +2,7 @@
 
 ### Unreleased
 
+* Upgrade the `au.com.stocksoftware.idea.codestyle` artifact to version `1.17`.
 * Upgrade the `com.google.truth` artifact to version `0.45`.
 * Upgrade the `com.google.testing.compile` artifact to version `0.18-rf`.
 * Upgrade the `org.realityforge.proton` artifacts to version `0.51`.
