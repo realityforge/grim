@@ -3,6 +3,7 @@ require 'buildr/gpg'
 require 'buildr/single_intermediate_layout'
 require 'buildr/gwt'
 require 'buildr/jacoco'
+require 'buildr/shade'
 
 desc 'grim: Ensure dead code is eliminated'
 define 'grim' do
@@ -75,11 +76,10 @@ define 'grim' do
     package(:jar).enhance do |jar|
       jar.merge(artifact(:proton_core))
       jar.enhance do |f|
-        shaded_jar = (f.to_s + '-shaded')
-        a = artifact('org.realityforge.shade:shade-cli:jar:1.0.0')
-        a.invoke
-        sh "#{Java::Commands.path_to_bin('java')} -jar #{a} --input #{f} --output #{shaded_jar} -rcom.google=grim.processor.vendor.google"
-        FileUtils.mv shaded_jar, f.to_s
+        Buildr::Shade.shade(f,
+                            f,
+                            'com.google' => 'grim.processor.vendor.google',
+                            'org.realityforge.proton' => 'react4j.processor.vendor.proton')
       end
     end
 
@@ -103,53 +103,11 @@ define 'grim' do
   iml.excluded_directories << project._('tmp')
 
   ipr.add_default_testng_configuration(:jvm_args => '-ea -Dgrim.output_fixture_data=false -Dgrim.fixture_dir=processor/src/test/resources')
-  ipr.add_component_from_artifact(:idea_codestyle)
-
-  ipr.add_component('CompilerConfiguration') do |component|
-    component.annotationProcessing do |xml|
-      xml.profile(:default => true, :name => 'Default', :enabled => true) do
-        xml.sourceOutputDir :name => 'generated/processors/main/java'
-        xml.sourceTestOutputDir :name => 'generated/processors/test/java'
-        xml.outputRelativeToContentRoot :value => true
-      end
-    end
-  end
-
   ipr.add_testng_configuration('processor',
                                :module => 'processor',
                                :jvm_args => '-ea -Dgrim.output_fixture_data=true -Dgrim.fixture_dir=src/test/fixtures')
-
-  ipr.add_component('JavacSettings') do |xml|
-    xml.option(:name => 'ADDITIONAL_OPTIONS_STRING', :value => '-Xlint:all,-processing,-serial')
-  end
-
-  ipr.add_component('JavaProjectCodeInsightSettings') do |xml|
-    xml.tag!('excluded-names') do
-      xml << '<name>com.sun.istack.internal.NotNull</name>'
-      xml << '<name>com.sun.istack.internal.Nullable</name>'
-      xml << '<name>org.jetbrains.annotations.Nullable</name>'
-      xml << '<name>org.jetbrains.annotations.NotNull</name>'
-      xml << '<name>org.testng.AssertJUnit</name>'
-    end
-  end
-  ipr.add_component('NullableNotNullManager') do |component|
-    component.option :name => 'myDefaultNullable', :value => 'javax.annotation.Nullable'
-    component.option :name => 'myDefaultNotNull', :value => 'javax.annotation.Nonnull'
-    component.option :name => 'myNullables' do |option|
-      option.value do |value|
-        value.list :size => '2' do |list|
-          list.item :index => '0', :class => 'java.lang.String', :itemvalue => 'org.jetbrains.annotations.Nullable'
-          list.item :index => '1', :class => 'java.lang.String', :itemvalue => 'javax.annotation.Nullable'
-        end
-      end
-    end
-    component.option :name => 'myNotNulls' do |option|
-      option.value do |value|
-        value.list :size => '2' do |list|
-          list.item :index => '0', :class => 'java.lang.String', :itemvalue => 'org.jetbrains.annotations.NotNull'
-          list.item :index => '1', :class => 'java.lang.String', :itemvalue => 'javax.annotation.Nonnull'
-        end
-      end
-    end
-  end
+  ipr.add_component_from_artifact(:idea_codestyle)
+  ipr.add_code_insight_settings
+  ipr.add_nullable_manager
+  ipr.add_javac_settings('-Xlint:all,-processing,-serial')
 end
