@@ -58,7 +58,7 @@ define 'grim' do
 
     test.using :testng
     test.with :compile_testing,
-              Java.tools_jar,
+              Buildr::Util.tools_jar,
               :proton_qa,
               :guava,
               :guava_failureaccess,
@@ -76,14 +76,9 @@ define 'grim' do
       jar.merge(artifact(:proton_core))
       jar.enhance do |f|
         shaded_jar = (f.to_s + '-shaded')
-        Buildr.ant 'shade_jar' do |ant|
-          artifact = Buildr.artifact(:shade_task)
-          artifact.invoke
-          ant.taskdef :name => 'shade', :classname => 'org.realityforge.ant.shade.Shade', :classpath => artifact.to_s
-          ant.shade :jar => f.to_s, :uberJar => shaded_jar do
-            ant.relocation :pattern => 'com.google', :shadedPattern => 'grim.processor.vendor.google'
-          end
-        end
+        a = artifact('org.realityforge.shade:shade-cli:jar:1.0.0')
+        a.invoke
+        sh "#{Java::Commands.path_to_bin('java')} -jar #{a} --input #{f} --output #{shaded_jar} -rcom.google=grim.processor.vendor.google"
         FileUtils.mv shaded_jar, f.to_s
       end
     end
