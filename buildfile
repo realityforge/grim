@@ -79,7 +79,7 @@ define 'grim' do
         Buildr::Shade.shade(f,
                             f,
                             'com.google' => 'grim.processor.vendor.google',
-                            'org.realityforge.proton' => 'react4j.processor.vendor.proton')
+                            'org.realityforge.proton' => 'grim.processor.vendor.proton')
       end
     end
 
