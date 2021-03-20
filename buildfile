@@ -76,10 +76,7 @@ define 'grim' do
     package(:jar).enhance do |jar|
       jar.merge(artifact(:proton_core))
       jar.enhance do |f|
-        Buildr::Shade.shade(f,
-                            f,
-                            'com.google' => 'grim.processor.vendor.google',
-                            'org.realityforge.proton' => 'grim.processor.vendor.proton')
+        Buildr::Shade.shade(f, f, 'org.realityforge.proton' => 'grim.processor.vendor.proton')
       end
     end
 
