@@ -1,6 +1,6 @@
 # Change Log
 
-### Unreleased
+### [v0.05](https://github.com/realityforge/grim/tree/v0.05) (2021-03-20) · [Full Changelog](https://github.com/realityforge/grim/compare/v0.04...v0.05)
 
 * Upgrade the `au.com.stocksoftware.idea.codestyle` artifact to version `1.17`.
 * Upgrade the `com.google.truth` artifact to version `0.45`.
