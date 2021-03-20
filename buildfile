@@ -5,6 +5,8 @@ require 'buildr/gwt'
 require 'buildr/jacoco'
 require 'buildr/shade'
 
+Buildr::MavenCentral.define_publish_tasks(:profile_name => 'org.realityforge', :username => 'realityforge')
+
 desc 'grim: Ensure dead code is eliminated'
 define 'grim' do
   project.group = 'org.realityforge.grim'
