@@ -1,6 +1,6 @@
 # Change Log
 
-### Unreleased
+### [v0.06](https://github.com/realityforge/grim/tree/v0.06) (2021-11-10) · [Full Changelog](https://github.com/realityforge/grim/compare/v0.05...v0.06)
 
 * Upgrade the `org.realityforge.proton` artifacts to version `0.52`.
 
