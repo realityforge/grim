@@ -1,5 +1,3 @@
-# Lock down dist to ensure that builds run on a distribution that supports oraclejdk8
-dist: trusty
 language: ruby
 jdk:
 - openjdk17
