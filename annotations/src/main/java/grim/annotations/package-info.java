@@ -6,7 +6,7 @@
  *
  * <p>The expression language used in conditions is based on matching the compile time settings. The expression either
  * references a compile time setting (in which case the expression is true if the value of the compile time setting
- * is <tt>true</tt>) or is of the form "[compile-time-setting]=[literal]".</p>
+ * is <code>true</code>) or is of the form "[compile-time-setting]=[literal]".</p>
  *
  * <p>The Omit rules are checked first and if it is determined that a symbol should be removed then the
  * keep rules are checked and if a symbol is not matched then it is expected that the symbol should be
