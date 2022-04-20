@@ -2,7 +2,7 @@
 dist: trusty
 language: ruby
 jdk:
-- oraclejdk8
+- openjdk17
 rvm:
 - 2.7.2
 install:
