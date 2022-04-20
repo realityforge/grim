@@ -9,8 +9,8 @@ Buildr::MavenCentral.define_publish_tasks(:profile_name => 'org.realityforge', :
 desc 'grim: Ensure dead code is eliminated'
 define 'grim' do
   project.group = 'org.realityforge.grim'
-  compile.options.source = '1.8'
-  compile.options.target = '1.8'
+  compile.options.source = '17'
+  compile.options.target = '17'
   compile.options.lint = 'all'
 
   project.version = ENV['PRODUCT_VERSION'] if ENV['PRODUCT_VERSION']
@@ -60,7 +60,6 @@ define 'grim' do
 
     test.using :testng
     test.with :compile_testing,
-              Buildr::Util.tools_jar,
               :proton_qa,
               :guava,
               :guava_failureaccess,
