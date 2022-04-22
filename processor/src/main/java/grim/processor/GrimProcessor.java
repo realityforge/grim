@@ -25,6 +25,7 @@ import javax.lang.model.element.VariableElement;
 import org.realityforge.proton.AbstractStandardProcessor;
 import org.realityforge.proton.AnnotationsUtil;
 import org.realityforge.proton.JsonUtil;
+import org.realityforge.proton.StopWatch;
 import static javax.tools.Diagnostic.Kind.*;
 
 /**
@@ -44,6 +45,8 @@ public final class GrimProcessor
   static final String SUFFIX = ".grim.json";
   @Nonnull
   private static final String SENTINEL = "<default>";
+  @Nonnull private final StopWatch _processPackageStopWatch = new StopWatch( "Process Packages" );
+  @Nonnull private final StopWatch _processTypeStopWatch = new StopWatch( "Process Types" );
 
   @Nonnull
   @Override
@@ -57,6 +60,13 @@ public final class GrimProcessor
   protected String getOptionPrefix()
   {
     return "grim";
+  }
+
+  @Override
+  protected void collectStopWatches( @Nonnull final Collection<StopWatch> stopWatches )
+  {
+    stopWatches.add( _processPackageStopWatch );
+    stopWatches.add( _processTypeStopWatch );
   }
 
   @Override
@@ -116,7 +126,7 @@ public final class GrimProcessor
   {
     for ( final TypeElement element : elements )
     {
-      performAction( env, this::processTypeElement, element );
+      performAction( env, "Process Type", this::processTypeElement, element, _processTypeStopWatch );
     }
   }
 
@@ -125,7 +135,7 @@ public final class GrimProcessor
   {
     for ( final PackageElement element : elements )
     {
-      performAction( env, this::processPackageElement, element );
+      performAction( env, "Process Package", this::processPackageElement, element, _processPackageStopWatch );
     }
   }
 

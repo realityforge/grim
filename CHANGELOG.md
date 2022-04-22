@@ -2,6 +2,8 @@
 
 ### Unreleased
 
+* Upgrade the `org.realityforge.proton` artifacts to version `0.55`.
+
 ### [v0.07](https://github.com/realityforge/grim/tree/v0.07) (2022-04-20) · [Full Changelog](https://github.com/realityforge/grim/compare/v0.06...v0.07)
 
 * Move to a minimum java version of `17`
