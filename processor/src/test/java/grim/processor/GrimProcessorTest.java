@@ -35,7 +35,7 @@ public class GrimProcessorTest
     throws Exception
   {
     final String output =
-      toFilename( "expected/" + GrimProcessor.BASE_RESOURCE_PATH, classname, "", GrimProcessor.SUFFIX );
+      GrimProcessor.BASE_RESOURCE_PATH + "/" + toFilename( classname, "", GrimProcessor.SUFFIX );
     assertSuccessfulCompile( inputs( classname ), Collections.singletonList( output ) );
   }
 
@@ -44,7 +44,7 @@ public class GrimProcessorTest
     throws Exception
   {
     final String classname = "com.example.OmitOnNestedClassExample";
-    final String outputFilename = "expected/META-INF/grim/com/example/OmitOnNestedClassExample$Foo.grim.json";
+    final String outputFilename = "META-INF/grim/com/example/OmitOnNestedClassExample$Foo.grim.json";
     assertSuccessfulCompile( inputs( classname ), Collections.singletonList( outputFilename ) );
   }
 

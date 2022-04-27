@@ -59,13 +59,7 @@ define 'grim' do
                  deps
 
     test.using :testng
-    test.with :compile_testing,
-              :proton_qa,
-              :guava,
-              :guava_failureaccess,
-              :truth,
-              :junit,
-              :hamcrest_core,
+    test.with :proton_qa,
               project('annotations').package(:jar),
               project('annotations').compile.dependencies
 
