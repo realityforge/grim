@@ -13,7 +13,7 @@ artifacts:
 
   javax_annotation: org.realityforge.javax.annotation:javax.annotation:jar:1.0.1
 
-  proton_core: org.realityforge.proton:proton-core:jar:0.57
-  proton_qa: org.realityforge.proton:proton-qa:jar:0.57
+  proton_core: org.realityforge.proton:proton-core:jar:0.58
+  proton_qa: org.realityforge.proton:proton-qa:jar:0.58
 
   javax_json: org.glassfish:javax.json:jar:1.1
