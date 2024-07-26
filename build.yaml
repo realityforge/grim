@@ -11,7 +11,7 @@ artifacts:
   gwt_user: com.google.gwt:gwt-user:jar:2.9.0
   gwt_dev: com.google.gwt:gwt-dev:jar:2.9.0
 
-  javax_annotation: org.realityforge.javax.annotation:javax.annotation:jar:1.0.1
+  javax_annotation: org.realityforge.javax.annotation:javax.annotation:jar:1.1.1
 
   proton_core: org.realityforge.proton:proton-core:jar:0.64
   proton_qa: org.realityforge.proton:proton-qa:jar:0.64

@@ -2,6 +2,7 @@
 
 ### Unreleased
 
+* Update the `org.realityforge.javax.annotation` artifact to version `1.1.1`.
 * Update the `org.realityforge.proton` artifacts to version `0.64`.
 
 ### [v0.09](https://github.com/realityforge/grim/tree/v0.09) (2022-04-27) · [Full Changelog](https://github.com/realityforge/grim/compare/v0.08...v0.09)
