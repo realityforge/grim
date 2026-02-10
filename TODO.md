@@ -6,6 +6,27 @@ complete as there is too much un-said.
 
 * Figure out a way how to support J2CL based applications.
 
+* Figure out why asserts are not working: i.e. The type `arez.ObjectsEqualsComparator$Type` is matched by this `@OmitCLinit` which is incorrect.
+```java
+@OmitClinit
+public final class ObjectsEqualsComparator
+  implements EqualityComparator
+{
+  // Class exists to avoid <clinit> on outer class
+  public static final class Type
+  {
+    /**
+     * Shared reusable instance.
+     */
+    public static final ObjectsEqualsComparator INSTANCE = new ObjectsEqualsComparator();
+
+    private Type()
+    {
+    }
+  }
+  ...
+```
+
 * Apply ruleset to output using gwt-symbolmap
 
 * Add a separate module containing a GWT Linker that emits the compile time properties for each permutation.
