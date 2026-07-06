@@ -1,0 +1,15 @@
+[
+  {
+    "keep": true,
+    "type": "^\\Qcom.example.KeepMethodExample\\E$",
+    "member": "^\\$?\\QgetName\\E$"
+  },
+  {
+    "keep": true,
+    "type": "^\\Qcom.example.KeepMethodExample\\E$",
+    "member": "^\\$?\\QgetScore\\E$",
+    "property": "galdr.enable_scores",
+    "operator": "NEQ",
+    "value": "true"
+  }
+]
