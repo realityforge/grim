@@ -24,6 +24,7 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import org.realityforge.proton.AbstractStandardProcessor;
 import org.realityforge.proton.AnnotationsUtil;
+import org.realityforge.proton.ElementsUtil;
 import org.realityforge.proton.JsonUtil;
 import org.realityforge.proton.StopWatch;
 import static javax.tools.Diagnostic.Kind.*;
@@ -111,7 +112,7 @@ public final class GrimProcessor
         final Set<? extends Element> elements = env.getElementsAnnotatedWith( annotation );
         for ( final Element element : elements )
         {
-          final TypeElement typeElement = (TypeElement) element.getEnclosingElement();
+          final TypeElement typeElement = ElementsUtil.getOwningType( element );
           typesToProcess.put( typeElement.getQualifiedName().toString(), typeElement );
         }
       }

@@ -1,0 +1,13 @@
+[
+  {
+    "type": "^\\Qcom.example.OmitConstructorExample\\E$",
+    "member": "^\\QOmitConstructorExample\\E$"
+  },
+  {
+    "type": "^\\Qcom.example.OmitConstructorExample\\E$",
+    "member": "^\\QOmitConstructorExample\\E$",
+    "property": "galdr.enable_names",
+    "operator": "NEQ",
+    "value": "true"
+  }
+]
