@@ -6,10 +6,11 @@ artifacts:
   idea_codestyle: au.com.stocksoftware.idea.codestyle:idea-codestyle:xml:1.17
 
   # GWT deps
-  gwt_user: com.google.gwt:gwt-user:jar:2.9.0
-  gwt_dev: com.google.gwt:gwt-dev:jar:2.9.0
+  gwt_user: org.gwtproject:gwt-user:jar:2.11.0
+  gwt_dev: org.gwtproject:gwt-dev:jar:2.11.0
 
   javax_annotation: org.realityforge.javax.annotation:javax.annotation:jar:1.1.1
+  javapoet: com.palantir.javapoet:javapoet:jar:0.14.0
 
   proton_core: org.realityforge.proton:proton-core:jar:0.74
   proton_qa: org.realityforge.proton:proton-qa:jar:0.74

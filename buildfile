@@ -56,6 +56,7 @@ define 'grim' do
     pom.dependency_filter = Proc.new {|dep| dep[:scope].to_s != 'test' && deps.include?(dep[:artifact])}
 
     compile.with :proton_core,
+                 :javapoet,
                  deps
 
     test.using :testng
@@ -68,9 +69,13 @@ define 'grim' do
     package(:javadoc)
 
     package(:jar).enhance do |jar|
+      jar.merge(artifact(:javapoet))
       jar.merge(artifact(:proton_core))
       jar.enhance do |f|
-        Buildr::Shade.shade(f, f, 'org.realityforge.proton' => 'grim.processor.vendor.proton')
+        Buildr::Shade.shade(f,
+                            f,
+                            'com.palantir.javapoet' => 'grim.processor.vendor.javapoet',
+                            'org.realityforge.proton' => 'grim.processor.vendor.proton')
       end
     end
 

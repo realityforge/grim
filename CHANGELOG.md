@@ -4,6 +4,9 @@
 
 * Update the `org.realityforge.javax.annotation` artifact to version `1.1.1`.
 * Update the `org.realityforge.proton` artifacts to version `0.70`.
+* Update the GWT artifacts to `org.gwtproject:gwt-*:2.11.0`.
+* Include Javapoet in the Grim processor artifact for Proton helper compatibility.
+* Rely on Proton to declare common annotation processor options.
 
 ### [v0.09](https://github.com/realityforge/grim/tree/v0.09) (2022-04-27) · [Full Changelog](https://github.com/realityforge/grim/compare/v0.08...v0.09)
 
