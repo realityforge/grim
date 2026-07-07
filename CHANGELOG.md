@@ -2,6 +2,7 @@
 
 ### Unreleased
 
+* Update the `org.realityforge.proton` artifacts to version `0.75`.
 * Update the `org.realityforge.javax.annotation` artifact to version `1.1.1`.
 * Update the `org.realityforge.proton` artifacts to version `0.70`.
 * Update the GWT artifacts to `org.gwtproject:gwt-*:2.11.0`.

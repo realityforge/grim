@@ -12,7 +12,7 @@ artifacts:
   javax_annotation: org.realityforge.javax.annotation:javax.annotation:jar:1.1.1
   javapoet: com.palantir.javapoet:javapoet:jar:0.14.0
 
-  proton_core: org.realityforge.proton:proton-core:jar:0.74
-  proton_qa: org.realityforge.proton:proton-qa:jar:0.74
+  proton_core: org.realityforge.proton:proton-core:jar:0.75
+  proton_qa: org.realityforge.proton:proton-qa:jar:0.75
 
   javax_json: org.glassfish:javax.json:jar:1.1
